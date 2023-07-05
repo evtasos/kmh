@@ -2,7 +2,9 @@
 <html>
 <head>
     <title>Pools</title>
-    
+    <!-- <meta http-equiv="refresh" content="5"> Refresh the page every 5 seconds -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
     <style>
         .message-container {
             position: fixed;
@@ -50,9 +52,8 @@
         <li>Treatment Room {{ room_number }}: {{ barcode }}</li>
         {% endfor %}
     </ul>
-
-    <button onclick="issueTicket()">Issue Ticket</button>
-
+    <button class="btn btn-primary" onclick="issueTicket()">Issue Ticket</button>
+    
     <h2>Assign to Office</h2>
     <select id="barcodeSelect">
         {% for barcode in office_pool %}
@@ -87,17 +88,41 @@
         {% endfor %}
     </select>
     <button onclick="proceedToTreatment()">Proceed</button>
+    <h2>Remove Barcode</h2>
+    <input type="text" id="removeBarcodeInput" placeholder="Barcode">
+    <button class="btn btn-danger" onclick="removeBarcode()">Remove</button>
 
     <script>
+        function removeBarcode() {
+            const barcodeInput = document.getElementById('removeBarcodeInput');
+            const barcode = barcodeInput.value;
+
+            fetch('/rmv-barcode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    barcode: barcode
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultMessage = document.getElementById('resultMessage');
+                resultMessage.innerText = data.message;
+                location.reload();// Refresh the page or update the UI as needed
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
         function issueTicket() {
             fetch('/issue-number')
                 .then(response => response.json())
                 .then(data => {
                     const resultMessage = document.getElementById('resultMessage');
                     resultMessage.innerText = `New ticket issued: ${data.barcode}`;
-                    setTimeout(function() {
-                    location.reload(); // Refresh the page after a certain duration
-                }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+                    location.reload();// Refresh the page or update the UI as needed
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -124,9 +149,7 @@
             .then(data => {
                 const resultMessage = document.getElementById('resultMessage');
                 resultMessage.innerText = data.message;
-                setTimeout(function() {
-                    location.reload(); // Refresh the page after a certain duration
-                }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+                location.reload();// Refresh the page or update the UI as needed
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -183,7 +206,7 @@
                 }
                 setTimeout(function() {
                     location.reload(); // Refresh the page after a certain duration
-                }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+                }, 5000); // Refresh after 5 seconds (5000 milliseconds)
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -193,7 +216,9 @@
 
 
 
-        
+        // setTimeout(function() {
+        //     location.reload(); // Refresh the page
+        // }, 5000); // Reload every 5 seconds (5000 milliseconds)
     </script>
 </body>
 </html>

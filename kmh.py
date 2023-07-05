@@ -74,7 +74,15 @@ def assign_treatment_room():
     else:
         return jsonify({'message': 'No barcodes available in the Chemo Waiting Pool.'})
 
-
+@app.route('/rmv-barcode', methods=['POST'])
+def rmv_barcode():
+    barcode = request.json['barcode']
+    #pool = request.json['pool']
+    if barcode in office_pool:
+        office_pool.remove(barcode)
+        return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left '})
+    else:
+        return jsonify({'error': 'Barcode not found in the office pool.'}), 404 
 
 @app.route('/office-pool')
 def get_office_pool():
