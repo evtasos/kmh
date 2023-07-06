@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pools</title>
+    
+    <style>
+        .message-container {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background-color: lightgray;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: nowrap; /* Add this line to prevent text from wrapping */
+            overflow: hidden; /* Add this line to hide overflowed text */
+            text-overflow: ellipsis; /* Add this line to show ellipsis for overflowed text */
+        }
+    </style>
+    
+</head>
+<body>
+    <button onclick="issueTicket()">Issue Ticket</button>
+    <h2>Νούμερα</h2>
+    <ul>
+        {% for barcode in office_pool %}
+        <li>{{ barcode }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>----------------------------</h2>
+    <select id="barcodeSelect">
+        {% for barcode in office_pool %}
+        <option value="{{ barcode }}">{{ barcode }}</option>
+        {% endfor %}
+    </select>
+    <select id="officeSelect">
+        {% for office_number in range(1, 4) %}
+        <option value="{{ office_number }}">Office {{ office_number }}</option>
+        {% endfor %}
+    </select>
+    <button onclick="assignToOffice()">Assign</button>
+    <h2>Assigned Offices</h2>
+        
+    <ul>
+        {% for office_number, barcodes in assigned_offices.items() %}
+        <li>
+            Office {{ office_number }}:
+            <ul>
+                {% for barcode in barcodes %}
+                <li>{{ barcode }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+    <h2>----------------------------</h2>
+    <select id="chemoSelect">
+        {% for office_number, barcodes in assigned_offices.items() %}
+            {% for barcode in barcodes %}
+                <option value="{{ barcode }}">Office {{ office_number }} - {{ barcode }}</option>
+            {% endfor %}
+        {% endfor %}
+    </select>
+
+    <p>Eligible for Chemo:</p>
+    <input type="radio" id="eligibleYes" name="eligible" value="true" checked>
+    <label for="eligibleYes">Yes</label>
+    <input type="radio" id="eligibleNo" name="eligible" value="false">
+    <label for="eligibleNo">No</label>
+    <button onclick="proceedToChemo()">Proceed</button>
+    <h2>Chemo Waiting Pool</h2>
+    <ul>
+        {% for barcode in chemo_waiting_pool %}
+        <li>{{ barcode }}</li>
+        {% endfor %}
+    </ul>
+    
+
+    <div class="message-container">
+        <h2 id="resultMessage"></h2>
+    </div>
+
+    <h2>----------------------------</h2>
+
+    <h2>Proceed to Treatment Room</h2>
+    <ul>
+        {% for room_number, barcode in treatment_rooms.items() %}
+        <li>Treatment Room {{ room_number }}: {{ barcode }}</li>
+        {% endfor %}
+    </ul>
+    <select id="roomSelect">
+        {% for room_number, barcode in treatment_rooms.items() %}
+            <option value="{{ room_number }}">Treatment Room {{ room_number }}</option>
+        {% endfor %}
+    </select>
+    <select id="chemoBarcodeSelect">
+        {% for barcode in chemo_waiting_pool %}
+            <option value="{{ barcode }}">{{ barcode }}</option>
+        {% endfor %}
+    </select>
+    <button onclick="proceedToTreatment()">Proceed</button>
+
+    <h2>Remove Barcode</h2>
+    <input type="text" id="removeBarcodeInput">
+    <button onclick="removeBarcode()">Remove</button>
+    <script>
+        function issueTicket() {
+            fetch('/issue-number')
+                .then(response => response.json())
+                .then(data => {
+                    const resultMessage = document.getElementById('resultMessage');
+                    resultMessage.innerText = `New ticket issued: ${data.barcode}`;
+                    setTimeout(function() {
+                    location.reload(); // Refresh the page after a certain duration
+                }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function assignToOffice() {
+            const barcodeSelect = document.getElementById('barcodeSelect');
+            const officeSelect = document.getElementById('officeSelect');
+            const barcode = barcodeSelect.value;
+            const officeNumber = officeSelect.value;
+
+            fetch('/assign-office', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    barcode: barcode,
+                    office_number: officeNumber
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultMessage = document.getElementById('resultMessage');
+                resultMessage.innerText = data.message;
+                setTimeout(function() {
+                    location.reload(); // Refresh the page after a certain duration
+                }, 1000); // Refresh after 1 seconds (5000 milliseconds)
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function proceedToChemo() {
+            const chemoSelect = document.getElementById('chemoSelect');
+            const barcode = chemoSelect.value;
+
+            const eligibleYes = document.getElementById('eligibleYes');
+            const eligibleNo = document.getElementById('eligibleNo');
+            const eligibleStatus = eligibleYes.checked ? true : false;
+
+            fetch('/add-to-chemo-waiting', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    barcode: barcode,
+                    status: eligibleStatus
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultMessage = document.getElementById('resultMessage');
+                resultMessage.innerText = data.message;
+                
+                setTimeout(function() {
+                    location.reload(); // Refresh the page after a certain duration
+                }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function proceedToTreatment() {
+            const roomSelect = document.getElementById('roomSelect');
+            const roomNumber = roomSelect.value;
+
+            const chemoBarcodeSelect = document.getElementById('chemoBarcodeSelect');
+            const barcode = chemoBarcodeSelect.value;
+
+            fetch('/assign-treatment-room', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    room_number: roomNumber,
+                    barcode: barcode
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultMessage = document.getElementById('resultMessage');
+                if (data.barcode) {
+                    resultMessage.innerText = `Proceeded to Treatment Room ${roomNumber}. Barcode: ${data.barcode}`;
+                } 
+                else {
+                    resultMessage.innerText = `No patient available in the Chemo Waiting Pool.`;
+                }
+                setTimeout(function() {
+                    location.reload(); // Refresh the page after a certain duration
+                }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        function removeBarcode() {
+            const barcodeInput = document.getElementById('removeBarcodeInput');
+            const barcode = barcodeInput.value;
+
+            fetch('/rmv-barcode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    barcode: barcode
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultMessage = document.getElementById('resultMessage');
+                if (data.message) {
+                    resultMessage.innerText = data.message;
+                } else {
+                    resultMessage.innerText = 'Error: Barcode not found';
+                }
+                setTimeout(function() {
+                    location.reload(); // Refresh the page after a certain duration
+                }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+
+
+        
+    </script>
+</body>
+</html>
