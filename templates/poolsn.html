@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pools</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .message-container {
+            /* display: none; Hide the message container initially */
+            position: fixed;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            background-color: lightgray;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <div class="container-fluid mt-5 bg-secondary">
+        <button class="btn btn-primary btn-lg" onclick="issueTicket()">Issue Ticket</button>
+        <div class="row ">
+            <div class="col-sm-4">.col-sm-4</div>
+            <div class="col text-center ">
+                <h2>Numbers</h2>
+            </div>
+        </div>
+        <div class="row">
+                
+                    {% for barcode in office_pool %}
+                    <div class="col-1 text-warning fw-bold">{{ barcode }}</div>
+                    <!-- <div style="margin-right: 10px;" class="text-info fw-bold">{{ barcode }}</div> -->
+                    {% endfor %}
+        </div>
+            
+
+        <hr>
+
+        <div class="mb-3">
+            <select class="form-select" id="barcodeSelect">
+                {% for barcode in office_pool %}
+                <option value="{{ barcode }}">{{ barcode }}</option>
+                {% endfor %}
+            </select>
+            <select class="form-select" id="officeSelect">
+                {% for office_number in range(1, 4) %}
+                <option value="{{ office_number }}">Office {{ office_number }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary" onclick="assignToOffice()">Assign</button>
+        </div>
+
+        <h2>Assigned Offices</h2>
+        <ul class="list-group">
+            {% for office_number, barcodes in assigned_offices.items() %}
+            <li class="list-group-item">
+                Office {{ office_number }}:
+                <ul>
+                    {% for barcode in barcodes %}
+                    <li>{{ barcode }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <hr>
+
+        <div class="mb-3">
+            <select class="form-select" id="chemoSelect">
+                {% for office_number, barcodes in assigned_offices.items() %}
+                    {% for barcode in barcodes %}
+                    <option value="{{ barcode }}">Office {{ office_number }} - {{ barcode }}</option>
+                    {% endfor %}
+                {% endfor %}
+            </select>
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="eligible" id="eligibleYes" value="true" checked>
+                <label class="form-check-label" for="eligibleYes">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="eligible" id="eligibleNo" value="false">
+                <label class="form-check-label" for="eligibleNo">No</label>
+            </div>
+
+            <button class="btn btn-primary" onclick="proceedToChemo()">Proceed</button>
+        </div>
+
+        <h2>Chemo Waiting Pool</h2>
+        <ul class="list-group">
+            {% for barcode in chemo_waiting_pool %}
+            <li class="list-group-item">{{ barcode }}</li>
+            {% endfor %}
+        </ul>
+
+        <div class="message-container" id="resultMessageContainer">
+            <h2 id="resultMessage"></h2>
+        </div>
+        
+        <hr>
+
+        <h2>Proceed to Treatment Room</h2>
+        <ul class="list-group">
+            {% for room_number, barcode in treatment_rooms.items() %}
+            <li class="list-group-item">Θάλαμος {{ room_number }}: {{ barcode }}</li>
+            {% endfor %}
+        </ul>
+        <select class="form-select" id="roomSelect">
+            {% for room_number, barcode in treatment_rooms.items() %}
+                <option value="{{ room_number }}">Θάλαμος {{ room_number }}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" id="chemoBarcodeSelect">
+            {% for barcode in chemo_waiting_pool %}
+                <option value="{{ barcode }}">{{ barcode }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-primary" onclick="proceedToTreatment()">Proceed</button>
+
+        <h2>Remove Barcode</h2>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="removeBarcodeInput">
+            <button class="btn btn-primary" onclick="removeBarcode()">Remove</button>
+        </div>
+    </div>
+
+    <script>
+        function issueTicket() {
+            fetch('/issue-number')
+                .then(response => response.json())
+                .then(data => {
+                    const resultMessage = document.getElementById('resultMessage');
+                    resultMessage.innerText = `New ticket issued: ${data.barcode}`;
+                    setTimeout(function() {
+                    location.reload(); // Refresh the page after a certain duration
+                }, 1000); // Refresh after 1 seconds (1000 milliseconds)
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function assignToOffice() {
+            const barcodeSelect = document.getElementById('barcodeSelect');
+            const officeSelect = document.getElementById('officeSelect');
+            const barcode = barcodeSelect.value;
+            const officeNumber = officeSelect.value;
+
+            fetch('/assign-office', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    barcode: barcode,
+                    office_number: officeNumber
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultMessage = document.getElementById('resultMessage');
+                resultMessage.innerText = data.message;
+                setTimeout(function() {
+                    location.reload(); // Refresh the page after a certain duration
+                }, 1000); // Refresh after 1 seconds (1000 milliseconds)
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function proceedToChemo() {
+            const chemoSelect = document.getElementById('chemoSelect');
+            const barcode = chemoSelect.value;
+
+            const eligibleYes = document.getElementById('eligibleYes');
+            const eligibleNo = document.getElementById('eligibleNo');
+            const eligibleStatus = eligibleYes.checked ? true : false;
+
+            fetch('/add-to-chemo-waiting', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    barcode: barcode,
+                    status: eligibleStatus
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultMessage = document.getElementById('resultMessage');
+                resultMessage.innerText = data.message;
+                setTimeout(function() {
+                    location.reload(); // Refresh the page after a certain duration
+                }, 1000); // Refresh after 1 seconds (1000 milliseconds)
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function proceedToTreatment() {
+            const roomSelect = document.getElementById('roomSelect');
+            const roomNumber = roomSelect.value;
+
+            const chemoBarcodeSelect = document.getElementById('chemoBarcodeSelect');
+            const barcode = chemoBarcodeSelect.value;
+
+            fetch('/assign-treatment-room', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    room_number: roomNumber,
+                    barcode: barcode
+                })
+            })
+            .then(response => response.json())
+            .then(data =>{
+                const resultMessage = document.getElementById('resultMessage');
+                if (data.barcode) {
+                    resultMessage.innerText = `Proceeded to Treatment Room ${roomNumber}. Barcode: ${data.barcode}`;
+                } 
+                else {
+                    resultMessage.innerText = `No patient available in the Chemo Waiting Pool.`;
+                }
+                setTimeout(function() {
+                    location.reload(); // Refresh the page after a certain duration
+                }, 1000); // Refresh after 1 seconds (1000 milliseconds)
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function removeBarcode() {
+            const barcodeInput = document.getElementById('removeBarcodeInput');
+            const barcode = barcodeInput.value;
+
+            fetch('/rmv-barcode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    barcode: barcode
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultMessage = document.getElementById('resultMessage');
+                if (data.message) {
+                    resultMessage.innerText = data.message;
+                } else {
+                    resultMessage.innerText = 'Error: Barcode not found';
+                }
+                setTimeout(function() {
+                    location.reload(); // Refresh the page after a certain duration
+                }, 1000); // Refresh after 1 seconds (1000 milliseconds)
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
