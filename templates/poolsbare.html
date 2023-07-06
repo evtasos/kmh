@@ -86,12 +86,12 @@
     <h2>Proceed to Treatment Room</h2>
     <ul>
         {% for room_number, barcode in treatment_rooms.items() %}
-        <li>Treatment Room {{ room_number }}: {{ barcode }}</li>
+        <li>Θάλαμος {{ room_number }}: {{ barcode }}</li>
         {% endfor %}
     </ul>
     <select id="roomSelect">
         {% for room_number, barcode in treatment_rooms.items() %}
-            <option value="{{ room_number }}">Treatment Room {{ room_number }}</option>
+            <option value="{{ room_number }}">Θάλαμος {{ room_number }}</option>
         {% endfor %}
     </select>
     <select id="chemoBarcodeSelect">
@@ -113,7 +113,7 @@
                     resultMessage.innerText = `New ticket issued: ${data.barcode}`;
                     setTimeout(function() {
                     location.reload(); // Refresh the page after a certain duration
-                }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+                }, 1000); // Refresh after 1 seconds (1000 milliseconds)
                 })
                 .catch(error => {
                     console.error('Error:', error);
