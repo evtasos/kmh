@@ -9,7 +9,7 @@ patient_counter = 1
 # Placeholder lists to store patient data
 issued_numbers = []
 office_pool = []
-assigned_offices = {'Γραφείο1': [], 'Γραφείο2': [],'Αιματολογικό': [],}
+assigned_offices = {'Γραφείο1': [], 'Γραφείο2': [],'Αιματολογικό': []}
 treatment_waiting_pool = []
 treatment_rooms = {1: [], 2: [], 3: [],4: [], 5: [], 6: [], 7: [], 8: []}
 
@@ -28,7 +28,7 @@ def assign_office():
     office_number = request.json['office_number']
     if barcode in office_pool:
         office_pool.remove(barcode)
-        assigned_offices.setdefault(office_number, []).append(barcode)
+        assigned_offices[office_number].append(barcode)
         return jsonify({'message': f'Patient with barcode {barcode} assigned to office {office_number}.'})
     return jsonify({'message': 'Barcode not found in the office pool.'}), 404
 

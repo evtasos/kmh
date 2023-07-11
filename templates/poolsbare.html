@@ -5,6 +5,7 @@
     
     <style>
         .message-container {
+            display: none; /* Add this line to hide the element by default */
             position: fixed;
             top: 50%;
             right: 20px;
@@ -29,23 +30,25 @@
     </ul>
 
     <h2>----------------------------</h2>
+
+    <select id="officeSelect">
+        {% for office, barcodes in assigned_offices.items() %}
+        <option value="{{ office }}">{{ office }}</option>
+        {% endfor %}
+    </select>
     <select id="barcodeSelect">
         {% for barcode in office_pool %}
         <option value="{{ barcode }}">{{ barcode }}</option>
         {% endfor %}
     </select>
-    <select id="officeSelect">
-        {% for office_number in range(1, 4) %}
-        <option value="{{ office_number }}">Office {{ office_number }}</option>
-        {% endfor %}
-    </select>
     <button onclick="assignToOffice()">Assign</button>
+    
     <h2>Assigned Offices</h2>
-        
-    <ul>
-        {% for office_number, barcodes in assigned_offices.items() %}
+
+    <!-- <ul>
+        {% for office, barcodes in assigned_offices.items() %}
         <li>
-            Office {{ office_number }}:
+            {{ office }}:
             <ul>
                 {% for barcode in barcodes %}
                 <li>{{ barcode }}</li>
@@ -53,7 +56,19 @@
             </ul>
         </li>
         {% endfor %}
+    </ul> -->
+    <ul>
+        {% for office, barcodes in assigned_offices.items() %}
+        <li>
+            {{ office }}:
+            {% if barcodes %}
+                {{ barcodes|join(', ') }}
+            {% endif %}
+        </li>
+        {% endfor %}
     </ul>
+        
+    
     <h2>----------------------------</h2>
     <select id="chemoSelect">
         {% for office_number, barcodes in assigned_offices.items() %}
@@ -104,13 +119,36 @@
     <h2>Remove Barcode</h2>
     <input type="text" id="removeBarcodeInput">
     <button onclick="removeBarcode()">Remove</button>
+
+
     <script>
+
+        function printBarcode(barcode) {
+        // Create a new window
+        var newWindow = window.open("", "Print Ticket", "width=500,height=500");
+        // Write the content to the new window with text-align: center and line-height: 150px
+        newWindow.document.write(`<p style="text-align: center; line-height: 150px; font-size: 14px;">Your ticket is:</p><p style="text-align: center; line-height: 150px; font-size: 24px;">${barcode}</p><p style="text-align: center; line-height: 150px; font-size: 72px;">Thank you!</p>`);
+        newWindow.document.title = "Print Ticket";
+        // Print the new window
+        newWindow.print();
+        // Close the new window
+        newWindow.close();
+        }
+
         function issueTicket() {
             fetch('/issue-number')
                 .then(response => response.json())
                 .then(data => {
+                    var barcode = data.barcode;
                     const resultMessage = document.getElementById('resultMessage');
                     resultMessage.innerText = `New ticket issued: ${data.barcode}`;
+
+                    // Show the message container
+                    const messageContainer = document.querySelector('.message-container');
+                    messageContainer.style.display = 'block';
+
+                    //print(data.barcode)
+                    printBarcode(barcode);
                     setTimeout(function() {
                     location.reload(); // Refresh the page after a certain duration
                 }, 1000); // Refresh after 1 seconds (1000 milliseconds)
