@@ -99,7 +99,7 @@ def get_treatment_rooms():
 @app.route('/pools')
 def view_pools():
     office_numbers = sorted(assigned_offices.keys())
-    return render_template('pools.html', office_pool=office_pool, assigned_offices=assigned_offices,
+    return render_template('test.html', office_pool=office_pool, assigned_offices=assigned_offices,
                            chemo_waiting_pool=treatment_waiting_pool, treatment_rooms=treatment_rooms,
                            office_numbers=office_numbers)
 
@@ -120,9 +120,9 @@ def reset():
     patient_counter = 1
     issued_numbers.clear()
     office_pool.clear()
-    assigned_offices.clear()
+    assigned_offices = {'Γραφείο1': [], 'Γραφείο2': [],'Αιματολογικό': []}
     treatment_waiting_pool.clear()
-    treatment_rooms = {1: [], 2: [], 3: []}
+    treatment_rooms = {1: [], 2: [], 3: [],4: [], 5: [], 6: [], 7: [], 8: []}
     return jsonify({'message': 'System reset successfully.'})
 
 if __name__ == '__main__':

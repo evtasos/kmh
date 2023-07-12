@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pools</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    
+    <style>
+        .message-container {
+            display: none;
+            position: fixed;
+            top: 75%;
+            right: 50%;
+            /* opacity: 0.4; */
+            transform: translateY(-50%);
+            /* background-color: lightgray; */
+            background: rgba(233, 111, 111, 0.568);
+            padding: 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        body {
+            /* background-image: url('https://cdn.fansshare.com/photo/backgroundimage/body-by-bg-for-website-1467130724.jpg'); */
+            background-image: url('../static/assets/body-by-bg-for-website-1467130724.jpg');
+            
+            
+        }
+        
+    </style>
+
+    <script src="../static/js/scripts.js"></script>
+    
+</head>
+<body>
+        <div class="container border border-dark border-2 rounded">
+            <!--  shadow p-3 mb-5 bg-body rounded -->
+            <div class="row text-center p-3">
+                <div class="h1 text-dark">Νούμερα</div>
+            </div>
+            
+            
+                    <div class="row col-12">
+                    {% for barcode in office_pool %}
+                    <div class="col-sm-1 h1 text-light text-center">{{ barcode }}</div>
+                    {% endfor %}
+                    </div>
+            
+            
+            <div class="row p-3">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 text-center">
+                        <button type="button" class="btn btn-primary btn-lg" onclick="issueTicket()">ΕΚΔΟΣΗ ΕΙΣΙΤΗΡΙΟΥ</button>
+                    </div>
+                    <div class="col-md-4"></div>
+            </div>
+            
+        </div>
+
+        <!-- <div class="row text-center">
+        <h2>----------------------------</h2>
+        </div> -->
+        <div class="container border border-primary border-3 shadow-lg rounded mt-3">
+        <div class="row text-center">
+        <h1>Assigned Offices</h1>
+        </div>
+        
+        
+        <div class="row">
+            <div class="col-md-4">
+                <select id="officeSelect" class="form-select form-select-lg mb-3" aria-label="Default select example">
+                    {% for office, barcodes in assigned_offices.items() %}
+                    <option value="{{ office }}">{{ office }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select id="barcodeSelect" class="form-select form-select-lg mb-3" aria-label="Default select example">
+                    {% for barcode in office_pool %}
+                    <option value="{{ barcode }}">{{ barcode }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <!-- <div class="d-grid gap-2 col-4 mx-auto"></div> -->
+                <button type="button" class="w-100 btn btn-primary btn-lg" onclick="assignToOffice()">Assign</button>
+                <!-- </div> -->
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        Γραφείο 1
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for barcode in assigned_offices['Γραφείο1'] %}
+                        <li class="list-group-item">{{ barcode }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        Γραφείο 2
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for barcode in assigned_offices['Γραφείο2'] %}
+                        <li class="list-group-item">{{ barcode }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        Αιματολογικό
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for barcode in assigned_offices['Αιματολογικό'] %}
+                        <li class="list-group-item">{{ barcode }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <!-- <h2>----------------------------</h2> -->
+    <div class="container border border-primary border-3 shadow-lg rounded mt-3">
+    <p>Eligible for Chemo:</p>
+    <input type="radio" id="eligibleYes" name="eligible" value="true" checked>
+    <label for="eligibleYes">Yes</label>
+    <input type="radio" id="eligibleNo" name="eligible" value="false">
+    <label for="eligibleNo">No</label>
+    <select id="chemoSelect">
+        {% for office_number, barcodes in assigned_offices.items() %}
+            {% for barcode in barcodes %}
+                <option value="{{ barcode }}">Office {{ office_number }} - {{ barcode }}</option>
+            {% endfor %}
+        {% endfor %}
+    </select>
+    <button onclick="proceedToChemo()">Proceed</button>
+    <h2>Chemo Waiting Pool</h2>
+    <ul>
+        {% for barcode in chemo_waiting_pool %}
+        <li>{{ barcode }}</li>
+        {% endfor %}
+    </ul>
+    
+
+    <div class="message-container">
+        <h2 id="resultMessage"></h2>
+    </div>
+</div>
+    <!-- <h2>----------------------------</h2> -->
+    <div class="container border border-primary border-3 shadow-lg rounded mt-3">
+    <h2>Proceed to Treatment Room</h2>
+    <div class="row">
+        <div class="col-md">
+            <div class="card">
+                <div class="card-header">
+                    Θάλαμος 1
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for barcode in treatment_rooms[1] %}
+                    <li class="list-group-item">{{ barcode }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card">
+                <div class="card-header">
+                    Θάλαμος 2
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for barcode in treatment_rooms[2] %}
+                    <li class="list-group-item">{{ barcode }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card">
+                <div class="card-header">
+                    Θάλαμος 3
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for barcode in treatment_rooms[3] %}
+                    <li class="list-group-item">{{ barcode }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card">
+                <div class="card-header">
+                    Θάλαμος 4
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for barcode in treatment_rooms[4] %}
+                    <li class="list-group-item">{{ barcode }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md">
+            <div class="card">
+                <div class="card-header">
+                    Θάλαμος 5
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for barcode in treatment_rooms[5] %}
+                    <li class="list-group-item">{{ barcode }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card">
+                <div class="card-header">
+                    Θάλαμος 6
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for barcode in treatment_rooms[6] %}
+                    <li class="list-group-item">{{ barcode }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card">
+                <div class="card-header">
+                    Θάλαμος 7
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for barcode in treatment_rooms[7] %}
+                    <li class="list-group-item">{{ barcode }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card">
+                <div class="card-header">
+                    Θάλαμος 8
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for barcode in treatment_rooms[8] %}
+                    <li class="list-group-item">{{ barcode }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    <!-- <ul>
+        {% for room_number, barcode in treatment_rooms.items() %}
+        <li>Θάλαμος {{ room_number }}: {{ barcode }}</li>
+        {% endfor %}
+    </ul> -->
+    <select id="roomSelect">
+        {% for room_number, barcode in treatment_rooms.items() %}
+            <option value="{{ room_number }}">Θάλαμος {{ room_number }}</option>
+        {% endfor %}
+    </select>
+    <select id="chemoBarcodeSelect">
+        {% for barcode in chemo_waiting_pool %}
+            <option value="{{ barcode }}">{{ barcode }}</option>
+        {% endfor %}
+    </select>
+    <button onclick="proceedToTreatment()">Proceed</button>
+</div>
+<div class="container border border-primary border-3 shadow-lg rounded mt-3">
+    <div class="row-md">
+        <div class="col-4">
+            <h2>Remove Barcode</h2>
+            <div class="col"><input type="text" id="removeBarcodeInput"></div>
+            <div class="col"><button type="button" class="w-100 btn btn-primary btn-lg" onclick="removeBarcode()">Remove</button></div>
+        </div> 
+        <div class="col">
+        <h2>Reset Day</h2>
+        <button type="button" class="w-100 btn btn-primary btn-lg" onclick="confirmAction()">Reset</button>
+        
+        </div>
+    </div>
+</div>
+</body>
+</html>
