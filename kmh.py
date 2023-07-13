@@ -114,15 +114,18 @@ def view_pools2():
 def view_numbers():
     return render_template('numbers.html', issued_numbers=issued_numbers)
 
+
 @app.route('/reset')
 def reset():
     global patient_counter
     patient_counter = 1
     issued_numbers.clear()
     office_pool.clear()
-    assigned_offices = {'Γραφείο1': [], 'Γραφείο2': [],'Αιματολογικό': []}
+    global assigned_offices
+    assigned_offices = {'Γραφείο1': [], 'Γραφείο2': [], 'Αιματολογικό': []}
     treatment_waiting_pool.clear()
-    treatment_rooms = {1: [], 2: [], 3: [],4: [], 5: [], 6: [], 7: [], 8: []}
+    global treatment_rooms
+    treatment_rooms = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}
     return jsonify({'message': 'System reset successfully.'})
 
 if __name__ == '__main__':
