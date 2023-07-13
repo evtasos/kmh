@@ -9,12 +9,12 @@
         .message-container {
             display: none;
             position: fixed;
-            top: 75%;
-            right: 50%;
+            top: 10%;
+            right: 10%;
             /* opacity: 0.4; */
             transform: translateY(-50%);
             /* background-color: lightgray; */
-            background: rgba(233, 111, 111, 0.568);
+            background: rgba(233, 111, 111, 0.24);
             padding: 10px;
             border-radius: 5px;
             white-space: nowrap;
@@ -34,7 +34,7 @@
     
 </head>
 <body>
-        <div class="container border border-dark border-2 rounded">
+        <div class="container border border-lightgrey border-2 shadow-lg rounded">
             <!--  shadow p-3 mb-5 bg-body rounded -->
             <div class="row text-center p-3">
                 <div class="h1 text-dark">Νούμερα</div>
@@ -84,7 +84,7 @@
             </div>
             <div class="col-md-4">
                 <!-- <div class="d-grid gap-2 col-4 mx-auto"></div> -->
-                <button type="button" class="w-100 btn btn-primary btn-lg" onclick="assignToOffice()">Assign</button>
+                <button type="button" class="w-50 btn btn-primary btn-lg" onclick="assignToOffice()">Assign</button>
                 <!-- </div> -->
             </div>
         </div>
@@ -132,18 +132,51 @@
     <!-- <h2>----------------------------</h2> -->
     <div class="container border border-primary border-3 shadow-lg rounded mt-3">
     <p>Eligible for Chemo:</p>
-    <input type="radio" id="eligibleYes" name="eligible" value="true" checked>
-    <label for="eligibleYes">Yes</label>
-    <input type="radio" id="eligibleNo" name="eligible" value="false">
-    <label for="eligibleNo">No</label>
-    <select id="chemoSelect">
+
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="eligibleYes" checked>
+        <label class="form-check-label" for="eligibleYes">
+            eligibleYes radio
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="eligibleNo" >
+        <label class="form-check-label" for="eligibleNo">
+            eligibleNo checked radio
+        </label>
+      </div>
+
+    
+    <!-- <select id="chemoSelect">
+        {% for office_number, barcodes in assigned_offices.items() %}
+            {% for barcode in barcodes %}
+                <option value="{{ barcode }}">Office {{ office_number }} - {{ barcode }}</option>
+            {% endfor %}
+        {% endfor %}
+    </select> -->
+    <!-- <select id="barcodeSelect" class="form-select form-select-lg mb-3" aria-label="Default select example">
+        {% for barcode in office_pool %}
+        <option value="{{ barcode }}">{{ barcode }}</option>
+        {% endfor %}
+    </select> -->
+
+    <select class="form-select" id="chemoSelect" aria-label="Chemo Select">
         {% for office_number, barcodes in assigned_offices.items() %}
             {% for barcode in barcodes %}
                 <option value="{{ barcode }}">Office {{ office_number }} - {{ barcode }}</option>
             {% endfor %}
         {% endfor %}
     </select>
-    <button onclick="proceedToChemo()">Proceed</button>
+    <select class="form-select" id="chemoSelect" aria-label="Chemo Select" style="width: 300px;">
+        {% for office_number, barcodes in assigned_offices.items() %}
+            {% for barcode in barcodes %}
+                <option value="{{ barcode }}">Office {{ office_number }} - {{ barcode }}</option>
+            {% endfor %}
+        {% endfor %}
+    </select>
+    
+
+    <button type="button" class="btn btn-primary btn-lg" onclick="proceedToChemo()">Proceed</button>
     <h2>Chemo Waiting Pool</h2>
     <ul>
         {% for barcode in chemo_waiting_pool %}
@@ -275,7 +308,7 @@
             <option value="{{ barcode }}">{{ barcode }}</option>
         {% endfor %}
     </select>
-    <button onclick="proceedToTreatment()">Proceed</button>
+    <button type="button" class="btn btn-primary btn-lg" onclick="proceedToTreatment()">Proceed</button>
 </div>
 <div class="container border border-primary border-3 shadow-lg rounded mt-3">
     <div class="row-md">

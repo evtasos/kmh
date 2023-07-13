@@ -44,7 +44,6 @@ def add_to_chemo_waiting():
                 treatment_waiting_pool.append(barcode)
                 return jsonify({'message': f'Patient with barcode {barcode} added to chemo waiting pool. Removed from office {office_number}.'})
             else:
-                treatment_waiting_pool.remove(barcode)
                 return jsonify({'message': f'Patient with barcode {barcode} is not eligible for chemo. Removed from office {office_number}.'})
 
     return jsonify({'message': 'Barcode not found in the assigned offices.'}), 404
