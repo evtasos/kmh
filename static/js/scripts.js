@@ -97,8 +97,10 @@ function proceedToChemo() {
         const resultMessage = document.getElementById('resultMessage');
         resultMessage.innerText = data.message;
         // Show the message container
+
         const messageContainer = document.querySelector('.message-container');
         messageContainer.style.display = 'block';
+        
         setTimeout(function() {
             location.reload(); // Refresh the page after a certain duration
         }, 1000); // Refresh after 5 seconds (5000 milliseconds)
