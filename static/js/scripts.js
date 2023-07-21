@@ -20,6 +20,7 @@ newWindow.close();
 }
 
 function issueTicket() {
+    const printOption = document.getElementById('printTicket').checked;
     fetch('/issue-number')
         .then(response => response.json())
         .then(data => {
@@ -32,7 +33,10 @@ function issueTicket() {
             messageContainer.style.display = 'block';
 
             //print(data.barcode)
-            printBarcode(barcode);
+            if (printOption){
+                printBarcode(barcode);
+            }
+
             setTimeout(function() {
             location.reload(); // Refresh the page after a certain duration
         }, 1000); // Refresh after 1 seconds (1000 milliseconds)
