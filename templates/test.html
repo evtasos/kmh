@@ -103,11 +103,13 @@
                     <div class="card-header">
                         Γραφείο 1
                     </div>
-                    <ul class="list-group list-group-flush">
-                        {% for barcode in assigned_offices['Γραφείο1'] %}
-                        <li class="list-group-item">{{ barcode }}</li>
-                        {% endfor %}
-                    </ul>
+                    <div class="list-group list-group-flush">
+                        <div class="row">
+                            {% for barcode in assigned_offices['Γραφείο1'] %}
+                            <div class="col-2 text-center">{{ barcode }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4">
@@ -115,11 +117,13 @@
                     <div class="card-header">
                         Γραφείο 2
                     </div>
-                    <ul class="list-group list-group-flush">
-                        {% for barcode in assigned_offices['Γραφείο2'] %}
-                        <li class="list-group-item">{{ barcode }}</li>
-                        {% endfor %}
-                    </ul>
+                    <div class="list-group list-group-flush">
+                        <div class="row">
+                            {% for barcode in assigned_offices['Γραφείο2'] %}
+                            <div class="col-2 text-center">{{ barcode }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4">
@@ -127,13 +131,16 @@
                     <div class="card-header">
                         Αιματολογικό
                     </div>
-                    <ul class="list-group list-group-flush">
-                        {% for barcode in assigned_offices['Αιματολογικό'] %}
-                        <li class="list-group-item">{{ barcode }}</li>
-                        {% endfor %}
-                    </ul>
+                    <div class="list-group list-group-flush">
+                        <div class="row">
+                            {% for barcode in assigned_offices['Αιματολογικό'] %}
+                            <div class="col-2 text-center">{{ barcode }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
+            
         </div>
         
     </div>
@@ -199,11 +206,13 @@
                 <div class="card-header">
                     Θάλαμος 1
                 </div>
-                <ul class="list-group list-group-flush">
-                    {% for barcode in treatment_rooms[1] %}
-                    <li class="list-group-item">{{ barcode }}</li>
-                    {% endfor %}
-                </ul>
+                <div class="list-group list-group-flush">
+                    <div class="row">
+                        {% for barcode in treatment_rooms[1] %}
+                         <div class="col-3 text-center bg-secondary">{{ barcode }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md">
