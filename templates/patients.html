@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assigned Offices and Treatment Rooms</title>
+    <!-- Link to Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        /* Custom CSS to style the page */
+        body {
+            background-image: url('../static/assets/body-by-bg-for-website-1467130724.jpg');
+            background-color: #f0f0f0;
+            padding-top: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+        .card-body ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .card-body li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .room-name {
+            flex-basis: 70%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">Assigned Offices</div>
+                    <div class="card-body">
+                        {% for office_number, patients in assigned_offices.items() %}
+                        <ul>
+                            <li>
+                                <span class="room-name">{{ office_number }}</span>
+                                <span class="barcode ">{% for patient in patients %} {{ patient }} {% endfor %}</span>
+                            </li>
+                        </ul>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">Treatment Rooms</div>
+                    <div class="card-body">
+                        {% for room_number, patients in treatment_rooms.items() %}
+                        <ul>
+                            <li>
+                                <span class="room-name">Treatment Room {{ room_number }}</span>
+                                <span class="barcode ">{% for patient in patients %} {{ patient }} {% endfor %}
+
+                                </span>
+                            </li>
+                        </ul>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Get previous data from localStorage or initialize it as an empty object
+        let previousData = JSON.parse(localStorage.getItem('previousData')) || {};
+    
+        function fetchAndCheckData() {
+            Promise.all([
+                fetch('/assigned-offices').then(response => response.json()),
+                fetch('/treatment-rooms').then(response => response.json())
+            ])
+            .then(([assignedOfficesData, treatmentRoomsData]) => {
+                const currentAssignedOfficesData = JSON.stringify(assignedOfficesData.assigned_offices);
+                const currentTreatmentRoomsData = JSON.stringify(treatmentRoomsData.treatment_rooms);
+    
+                if (
+                    (previousData.assignedOffices !== null && currentAssignedOfficesData !== previousData.assignedOffices) ||
+                    (previousData.treatmentRooms !== null && currentTreatmentRoomsData !== previousData.treatmentRooms)
+                ) {
+                    location.reload(); // Refresh the page if data has changed
+                }
+    
+                previousData.assignedOffices = currentAssignedOfficesData;
+                previousData.treatmentRooms = currentTreatmentRoomsData;
+    
+                // Store current data in localStorage
+                localStorage.setItem('previousData', JSON.stringify(previousData));
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+        }
+    
+        // Fetch data initially and then every 5 seconds
+        fetchAndCheckData();
+        setInterval(fetchAndCheckData, 5000); // Adjust the interval as needed
+    </script>
+    
+
+    <!-- Link to Bootstrap JS and jQuery (required for Bootstrap) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

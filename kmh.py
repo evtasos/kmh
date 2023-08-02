@@ -105,7 +105,7 @@ def view_pools():
 @app.route('/pools2')
 def view_pools2():
     office_numbers = sorted(assigned_offices.keys())
-    return render_template('poolsbare.html', office_pool=office_pool, assigned_offices=assigned_offices,
+    return render_template('patients.html', office_pool=office_pool, assigned_offices=assigned_offices,
                            chemo_waiting_pool=treatment_waiting_pool, treatment_rooms=treatment_rooms,
                            office_numbers=office_numbers)
 
