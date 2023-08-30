@@ -7,14 +7,18 @@
 
     <style>
         /* Custom CSS to style the page */
+        html, body {
+            height: 100%;
+        }
+
         body {
-            background-image: url('../static/assets/body-by-bg-for-website-1467130724.jpg');
+            background-image: url('../static/assets/clouds.jpg');
             background-color: #f0f0f0;
             padding-top: 20px;
         }
         .card {
             margin-bottom: 20px;
-            background-image: url('../static/assets/clouds.jpg'); /* Add your background image path here */
+            background-image: url('../static/assets/body-blue.jpg'); /* Add your background image path here */
             background-size: cover;
         }
         .card-header {
@@ -26,6 +30,7 @@
             display: flex;
             flex-direction: column;
             padding: 10px;
+            height: 100%; /* Make the card body take up full height */
         }
         .card-body ul {
             list-style-type: none;
@@ -39,39 +44,52 @@
         .room-name {
             flex-basis: 70%;
         }
+        .equal-height {
+            height: calc(100% / 3); /* Set equal height for 3 items */
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card h-100">
+    <div class="container-fluid h-100"> <!-- Use a fluid container and h-100 to take up full height -->
+        <div class="row h-100"> <!-- Use h-100 to take up full height -->
+            <div class="col-md-3">
+                <div class="card h-100"> <!-- Use h-100 to take up full height -->
                     <div class="card-header">Assigned Offices</div>
                     <div class="card-body">
                         {% for office_number, patients in assigned_offices.items() %}
-                        <ul>
-                            <li>
-                                <span class="room-name">{{ office_number }}</span>
-                                <span class="barcode ">{% for patient in patients %} {{ patient }} {% endfor %}</span>
-                            </li>
-                        </ul>
+                        <div class="row equal-height"> <!-- Use equal-height class to set equal heights -->
+                            <div class="col-12">
+                                <span class="room-name h1">{{ office_number }}</span>
+                                <ul>
+                                    {% for patient in patients %}
+                                    <li>
+                                        <span class="barcode h1">{{ patient }}</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card h-100">
+            <div class="col-md-9">
+                <div class="card h-100"> <!-- Use h-100 to take up full height -->
                     <div class="card-header">Treatment Rooms</div>
                     <div class="card-body">
                         {% for room_number, patients in treatment_rooms.items() %}
-                        <ul>
-                            <li>
-                                <span class="room-name">Treatment Room {{ room_number }}</span>
-                                <span class="barcode ">{% for patient in patients %} {{ patient }} {% endfor %}
-
-                                </span>
-                            </li>
-                        </ul>
+                        <div class="row equal-height"> <!-- Use equal-height class to set equal heights -->
+                            <div class="col-12">
+                                <span class="room-name h1">Treatment Room {{ room_number }}</span>
+                                <ul>
+                                    {% for patient in patients %}
+                                    <li>
+                                        <span class="barcode h1">{{ patient }}</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
