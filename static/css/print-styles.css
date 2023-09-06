@@ -1,0 +1,17 @@
+/* print-styles.css */
+
+/* Reset default styles for printing */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Style for the custom message */
+div {
+    text-align: center;
+}
+
+p {
+    margin: 5px 0;
+    font-size: 16px; /* Adjust the font size as needed */
+}

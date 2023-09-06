@@ -6,18 +6,56 @@
 // This file is intentionally blank
 // Use this file to add JavaScript to your project
 
-
 function printBarcode(barcode) {
-// Create a new window
-var newWindow = window.open("", "Print Ticket", "width=500,height=500");
-// Write the content to the new window with text-align: center and line-height: 150px
-newWindow.document.write(`<p style="text-align: center;">Your ticket is:</p><p style="text-align: center; ">${barcode}</p><p style="text-align: center; font-size: 8px;">Thank you!</p>`);
-newWindow.document.title = "Print Ticket";
-// Print the new window
-newWindow.print();
-// Close the new window
-newWindow.close();
+    // Create a new window
+    var newWindow = window.open("", "Print Ticket", "width=500,height=500");
+
+    // Add the print-specific styles to the new window
+    var cssLink = document.createElement("link");
+    cssLink.href = "print-styles.css"; // Adjust the path to your CSS file
+    cssLink.rel = "stylesheet";
+    cssLink.type = "text/css";
+    newWindow.document.head.appendChild(cssLink);
+
+    // Define your custom message as HTML
+    var customMessage = `
+        <div style="text-align: center;">
+            <p>-------------------------------</p>
+            <p>Γ.Α.Ν.Π. ΜΕΤΑΞΑ</p>
+            <p>ΜΟΝΑΔΑ ΗΜΕΡΗΣΙΑΣ<br>ΝΟΣΗΛΕΙΑΣ</p>
+            <p>Ο ΑΡΙΘΜΟΣ ΔΕΝ ΑΝΤΙΣΤΟΙΧΕΙ</p>
+            <p style="font-size: 24px;">${barcode}</p> <!-- Change the font-size here -->
+            <p>-------------------------------</p>
+        </div>
+    `;
+
+    // Write the custom message to the new window
+    newWindow.document.write(customMessage);
+
+    newWindow.document.title = "Print Ticket";
+
+    // Add a delay to allow content to load before printing
+    setTimeout(function () {
+        // Print the new window
+        newWindow.print();
+
+        // Close the new window
+        newWindow.close();
+    }, 1000); // Adjust the delay (in milliseconds) as needed
 }
+
+
+// function printBarcode(barcode) {
+// // Create a new window
+// var newWindow = window.open("", "Print Ticket", "width=500,height=500");
+// // Write the content to the new window with text-align: center and line-height: 150px
+// newWindow.document.write(`<p style="text-align: center;">Your ticket is:</p><p style="text-align: center; ">${barcode}</p><p style="text-align: center; font-size: 8px;">Thank you!</p>`);
+// newWindow.document.title = "Print Ticket";
+// // Print the new window
+// newWindow.print();
+// // Close the new window
+// newWindow.close();
+// }
 
 function issueTicket() {
     const printOption = document.getElementById('printTicket').checked;
