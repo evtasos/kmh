@@ -107,6 +107,11 @@ function assignToOffice() {
         // Show the message container
         const messageContainer = document.querySelector('.message-container');
         messageContainer.style.display = 'block';
+        // Reset the select element to "office" as the default option
+        const officeSelect = document.getElementById('officeSelect');
+        officeSelect.selectedIndex = 0; // Set the selected index to 0 (which is the "office" option)
+        const barcodeSelect = document.getElementById('barcodeSelect');
+        barcodeSelect.selectedIndex = 0;
         setTimeout(function() {
             location.reload(); // Refresh the page after a certain duration
         }, 1000); // Refresh after 1 seconds (5000 milliseconds)
@@ -142,7 +147,8 @@ function proceedToChemo() {
 
         const messageContainer = document.querySelector('.message-container');
         messageContainer.style.display = 'block';
-        
+        const chemoSelect = document.getElementById('chemoSelect');
+        chemoSelect.selectedIndex = 0;
         setTimeout(function() {
             location.reload(); // Refresh the page after a certain duration
         }, 1000); // Refresh after 5 seconds (5000 milliseconds)
@@ -184,6 +190,10 @@ function proceedToTreatment() {
             const messageContainer = document.querySelector('.message-container');
             messageContainer.style.display = 'block';
         }
+        const roomSelect = document.getElementById('roomSelect');
+        roomSelect.selectedIndex = 0;
+        const chemoBarcodeSelect = document.getElementById('chemoBarcodeSelect');
+        chemoBarcodeSelect.selectedIndex = 0;
         setTimeout(function() {
             location.reload(); // Refresh the page after a certain duration
         }, 1000); // Refresh after 5 seconds (5000 milliseconds)
@@ -220,9 +230,47 @@ function removeBarcode() {
             const messageContainer = document.querySelector('.message-container');
             messageContainer.style.display = 'block';
         }
+        barcodeInput.value = '';
         setTimeout(function() {
             location.reload(); // Refresh the page after a certain duration
         }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function importTicket() {
+    const ticketInput = document.getElementById("importTicketInput");
+    const destinationSelect = document.getElementById("importDestinationSelect");
+
+    const ticket = ticketInput.value;
+    const destination = destinationSelect.value;
+
+    if (ticket.trim() === "") {
+        alert("Please enter a ticket number.");
+        return;
+    }
+
+    // Send a request to your Flask endpoint to handle the import action.
+    fetch('/import-ticket', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ticket: ticket,
+            destination: destination,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message); // Display a message to the user.
+        ticketInput.value = ''; // Clear the input field.
+        setTimeout(function() {
+            location.reload(); // Refresh the page after a certain duration
+        }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+    
     })
     .catch(error => {
         console.error('Error:', error);

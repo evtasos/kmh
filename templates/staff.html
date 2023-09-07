@@ -85,6 +85,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <select id="officeSelect" class="form-select form-select-lg mb-3" aria-label="Default select example">
+                        <option value="Επιλογή Ιατρού">Επιλογή Ιατρού</option>
                         {% for office, barcodes in assigned_offices.items() %}
                         <option value="{{ office }}">{{ office }}</option>
                         {% endfor %}
@@ -92,6 +93,7 @@
                 </div>
                 <div class="col-md-4">
                     <select id="barcodeSelect" class="form-select form-select-lg mb-3" aria-label="Default select example">
+                        <option value="Εισιτήρια">Εισιτήρια</option>
                         {% for barcode in office_pool %}
                         <option value="{{ barcode }}">{{ barcode }}</option>
                         {% endfor %}
@@ -170,9 +172,10 @@
                 </label>
             </div>
             <select class="form-select me-3" id="chemoSelect" aria-label="Chemo Select" style="width: 300px;">
+                <option value="Εισητήριο Ασθενούς">Εισιτήριο Ασθενούς</option>
                 {% for office_number, barcodes in assigned_offices.items() %}
                     {% for barcode in barcodes %}
-                        <option value="{{ barcode }}">Office {{ office_number }} - {{ barcode }}</option>
+                        <option value="{{ barcode }}">{{ office_number }} - {{ barcode }}</option>
                     {% endfor %}
                 {% endfor %}
             </select>
@@ -206,7 +209,8 @@
         <div class="col-md">
             <div class="form-group">
                 <!-- <label for="roomSelect">Select Room</label> -->
-                <select id="roomSelect" class="form-select form-select-lg h5 text-center">
+                <select id="roomSelect" class="form-select form-select-lg h5">
+                    <option value="Θάλαμος">Θάλαμος</option>
                     {% for room_number, barcode in treatment_rooms.items() %}
                         <option value="{{ room_number }}">Θάλαμος {{ room_number }}</option>
                     {% endfor %}
@@ -217,6 +221,7 @@
             <div class="form-group">
                 <!-- <label for="chemoBarcodeSelect">Select Chemo Barcode</label> -->
                 <select id="chemoBarcodeSelect" class="form-select form-select-lg">
+                    <option value="Εισιτήριο">Εισιτήριο</option>
                     {% for barcode in chemo_waiting_pool %}
                         <option value="{{ barcode }}">{{ barcode }}</option>
                     {% endfor %}
@@ -227,7 +232,7 @@
         <button type="button" class="btn btn-primary btn-lg" onclick="proceedToTreatment()">Proceed</button>
         </div>
 
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-md">
             <div class="card">
                 <div class="card-header h5 text-center">
@@ -335,16 +340,44 @@
     
 </div>
 <div class="container border border-primary border-2 shadow-lg rounded mt-3">
-    <div class="row-md">
+    <div class="row">
         <div class="col-4">
-            <h2>Remove Barcode</h2>
-            <div class="col"><input type="text" id="removeBarcodeInput"></div>
-            <div class="col"><button type="button" class="w-100 btn btn-primary btn-lg" onclick="removeBarcode()">Remove</button></div>
-        </div> 
-        <div class="col-8">
-            <h2>Reset Day</h2>
-            <button type="button" class="w-100 btn btn-primary btn-lg" onclick="confirmAction()">Reset</button>
+            <div class="text-center barcode-text2">
+            <h2>Διαγραφή</h2>
+            </div>
+            <!-- <div class="h-25 blank-line"></div> -->
+            <!-- <div class="col"><input type="text" id="removeBarcodeInput" placeholder="Αριθμός Εισιτηρίου"></div> -->
+            <input type="text" id="removeBarcodeInput" class="form-control" placeholder="Αριθμός Εισητηρίου">
+            <div class="col"><button type="button" class="w-100 btn btn-primary btn-lg" onclick="removeBarcode()">Remove Ticket</button></div>
         </div>
+
+        <div class="col-4">
+        </div>
+
+        <div class="col-4">
+            <div class="text-center barcode-text2">
+            <h2>Εισαγωγή</h2>
+        </div>
+            <input type="text" id="importTicketInput" class="form-control" placeholder="Αριθμός Εισιτηρίου">
+        
+            <select id="importDestinationSelect" class="form-select">
+                <option value="office_pool">Office Pool</option>
+                <option value="treatment_waiting_pool">Treatment Waiting Pool</option>
+            </select>
+        
+        
+            <button type="button" class=" w-100 btn btn-primary btn-lg" onclick="importTicket()">Import Ticket</button>
+        </div>
+    </div>
+</div>
+    <div class="container shadow-lg rounded mt-3 text-center">
+    <div class="row">
+        <div class="col-4"></div>     
+        <div class="col-4">
+            <h2>Reset Day</h2>
+            <button type="button" class="w-100 btn btn-danger btn-lg" onclick="confirmAction()">Reset</button>
+        </div>
+        <div class="col-4"></div>
     </div>
 </div>
 </body>

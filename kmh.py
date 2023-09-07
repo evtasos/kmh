@@ -79,6 +79,23 @@ def remove_barcode():
         return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left chemo pool'})
     return jsonify({'message': 'Barcode not found '}), 404
 
+@app.route('/import-ticket', methods=['POST'])
+def import_ticket():
+    data = request.json
+    ticket = data['ticket']
+    destination = data['destination']
+
+    if destination == 'office_pool':
+        office_pool.append(ticket)
+        return jsonify({'message': f'Ticket {ticket} imported to Office Pool.'})
+
+    if destination == 'treatment_waiting_pool':
+        treatment_waiting_pool.append(ticket)
+        return jsonify({'message': f'Ticket {ticket} imported to Treatmet Waiting Pool.'})
+    # Add handling for other destinations (assigned_offices, treatment_waiting_pool, treatment_rooms) here.
+
+    return jsonify({'message': 'Invalid destination.'}), 400
+
 @app.route('/office-pool')
 def get_office_pool():
     return jsonify({'office_pool': office_pool})
