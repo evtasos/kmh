@@ -17,7 +17,12 @@ treatment_rooms = {1: [], 2: [], 3: [],4: [], 5: [], 6: [], 7: [], 8: []}
 def issue_number():
     global patient_counter
     barcode = 'A' + str(patient_counter)
-    patient_counter += 1
+
+    # Check if the barcode already exists in any other pool
+    while barcode in office_pool or any(barcode in barcodes for barcodes in assigned_offices.values()) or barcode in treatment_waiting_pool or any(barcode in barcodes for barcodes in treatment_rooms.values()):
+        patient_counter += 1
+        barcode = 'A' + str(patient_counter)
+
     issued_numbers.append(barcode)
     office_pool.append(barcode)
     return jsonify({'barcode': barcode})
@@ -86,12 +91,18 @@ def import_ticket():
     destination = data['destination']
 
     if destination == 'office_pool':
-        office_pool.append(ticket)
-        return jsonify({'message': f'Ticket {ticket} imported to Office Pool.'})
+        if ticket in office_pool:
+            return jsonify({'message': f'Ticket {ticket} already exists.'})
+        else :
+            office_pool.append(ticket)
+            return jsonify({'message': f'Ticket {ticket} imported to Office Pool.'})
 
     if destination == 'treatment_waiting_pool':
-        treatment_waiting_pool.append(ticket)
-        return jsonify({'message': f'Ticket {ticket} imported to Treatmet Waiting Pool.'})
+        if ticket in treatment_waiting_pool:
+            return jsonify({'message': f'Ticket {ticket} already exists.'})
+        else:
+            treatment_waiting_pool.append(ticket)
+            return jsonify({'message': f'Ticket {ticket} imported to Treatmet Waiting Pool.'})
     # Add handling for other destinations (assigned_offices, treatment_waiting_pool, treatment_rooms) here.
 
     return jsonify({'message': 'Invalid destination.'}), 400
@@ -115,7 +126,13 @@ def get_treatment_rooms():
 @app.route('/pools')
 def view_pools():
     office_numbers = sorted(assigned_offices.keys())
-    return render_template('staff.html', office_pool=office_pool, assigned_offices=assigned_offices,
+    return render_template('nurses.html', office_pool=office_pool, assigned_offices=assigned_offices,
+                           chemo_waiting_pool=treatment_waiting_pool, treatment_rooms=treatment_rooms,
+                           office_numbers=office_numbers)
+@app.route('/pools3')
+def view_pools3():
+    office_numbers = sorted(assigned_offices.keys())
+    return render_template('doctors.html', office_pool=office_pool, assigned_offices=assigned_offices,
                            chemo_waiting_pool=treatment_waiting_pool, treatment_rooms=treatment_rooms,
                            office_numbers=office_numbers)
 
@@ -128,7 +145,7 @@ def view_pools2():
 
 @app.route('/numbers')
 def view_numbers():
-    return render_template('numbers.html', issued_numbers=issued_numbers)
+    return jsonify({'issued_numbers': issued_numbers})
 
 
 @app.route('/reset')

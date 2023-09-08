@@ -207,6 +207,11 @@ function removeBarcode() {
     const barcodeInput = document.getElementById('removeBarcodeInput');
     const barcode = barcodeInput.value;
 
+    if (barcode.trim() === "") {
+        alert("Please enter a ticket number.");
+        return;
+    }
+
     fetch('/rmv-barcode', {
         method: 'POST',
         headers: {
@@ -218,18 +223,20 @@ function removeBarcode() {
     })
     .then(response => response.json())
     .then(data => {
-        const resultMessage = document.getElementById('resultMessage');
-        if (data.message) {
-            resultMessage.innerText = data.message;
-            // Show the message container
-            const messageContainer = document.querySelector('.message-container');
-            messageContainer.style.display = 'block';
-        } else {
-            resultMessage.innerText = 'Error: Barcode not found';
-            // Show the message container
-            const messageContainer = document.querySelector('.message-container');
-            messageContainer.style.display = 'block';
-        }
+        alert(data.message); // Display a message to the user.
+        // const resultMessage = document.getElementById('resultMessage');
+        
+        // if (data.message) {
+        //     resultMessage.innerText = data.message;
+        //     // Show the message container
+        //     const messageContainer = document.querySelector('.message-container');
+        //     messageContainer.style.display = 'block';
+        // } else {
+        //     resultMessage.innerText = 'Error: Barcode not found';
+        //     // Show the message container
+        //     const messageContainer = document.querySelector('.message-container');
+        //     messageContainer.style.display = 'block';
+        // }
         barcodeInput.value = '';
         setTimeout(function() {
             location.reload(); // Refresh the page after a certain duration

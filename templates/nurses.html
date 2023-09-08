@@ -11,8 +11,9 @@
             position: fixed;
             top: 5%;
             right: 10%;
-            opacity: 0.7;
+            /* opacity: 0.7; */
             transform: translateY(-50%);
+            transition: opacity 0.5s ease-in-out;
             /* background-color: lightgray; */
             background: rgb(172, 83, 83);
             padding: 10px;
@@ -21,13 +22,18 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        /* .barcode-text {
-            color: #DB960B  ; 
+        .bbarcode-text {
+            color: #000080   ; 
             }
-        .barcode-text2 {
-            color: #DBC221  ; 
-            }     */
-
+        .bbarcode-text2 {
+            color: #6A5ACD  ; 
+            }    
+        .bbarcode-text3 {
+            color: #72DFE8  ; 
+            }     
+        .barcode-text4 {
+            color: #BA5C12  ; 
+            }     
         body {
             
             background-image: url('../static/assets/body-blue.jpg');
@@ -43,14 +49,14 @@
 <body>
         <div class="container border border-lightgrey border-2 shadow-lg rounded mt-3">
             <!--  shadow p-3 mb-5 bg-body rounded -->
-            <div class="row text-center p-3">
-                <div class="h1 barcode-text2">ΕΙΣΙΤΗΡΙΑ</div>
+            <div class="row text-center bbarcode-text p-3">
+                <div class="h1">ΕΙΣΙΤΗΡΙΑ ΣΕ ΑΝΑΜΟΝΗ ΙΑΤΡΟΥ</div>
             </div>
             
             
                     <div class="row col-12">
                     {% for barcode in office_pool %}
-                    <div class="col-sm-1 h3 barcode-text text-center">{{ barcode }}</div>
+                    <div class="col-sm-1 h3 bbarcode-text2 text-center">{{ barcode }}</div>
                     {% endfor %}
                     </div>
             
@@ -66,7 +72,7 @@
                         </div>
                     </div>
                     <div class="col-md-4 text-center">
-                        <button type="button" class="btn btn-primary btn-lg" onclick="issueTicket()">ΕΚΔΟΣΗ ΕΙΣΙΤΗΡΙΟΥ</button>
+                        <button type="button" class="btn btn-primary btn-lg " onclick="issueTicket()">ΕΚΔΟΣΗ ΕΙΣΙΤΗΡΙΟΥ</button>
                     </div>
                     <div class="col-md-4"></div>
             </div>
@@ -77,13 +83,13 @@
         <h2>----------------------------</h2>
         </div> -->
         <div class="container border border-primary border-2 shadow-lg rounded mt-3">
-            <div class="row text-center barcode-text2">
+            <div class="row text-center">
             <h1>ΓΡΑΦΕΙΑ ΙΑΤΡΩΝ</h1>
             </div>
         
         
-            <div class="row">
-                <div class="col-md-4">
+            <div class="row p-1">
+                <div class="col-md">
                     <select id="officeSelect" class="form-select form-select-lg mb-3" aria-label="Default select example">
                         <option value="Επιλογή Ιατρού">Επιλογή Ιατρού</option>
                         {% for office, barcodes in assigned_offices.items() %}
@@ -91,7 +97,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md">
                     <select id="barcodeSelect" class="form-select form-select-lg mb-3" aria-label="Default select example">
                         <option value="Εισιτήρια">Εισιτήρια</option>
                         {% for barcode in office_pool %}
@@ -99,15 +105,15 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-4">
+                <!-- <div class="col-md-4"> -->
                     <!-- <div class="d-grid gap-2 col-4 mx-auto"></div> -->
-                    <button type="button" class="w-50 btn btn-primary btn-lg" onclick="assignToOffice()">Assign</button>
+                    <button type="button" class="btn btn-primary btn-lg" onclick="assignToOffice()">ΕΙΣΑΓΩΓΗ</button>
                     <!-- </div> -->
-                </div>
+                <!-- </div> -->
             </div>
         
     
-        <div class="row">
+        <div class="row mt-3">
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header h5 text-center">
@@ -116,7 +122,7 @@
                     <div class="list-group list-group-flush">
                         <div class="row">
                             {% for barcode in assigned_offices['Γραφείο1'] %}
-                            <div class="col-2 barcode-text h5 text-center">{{ barcode }}</div>
+                            <div class="col-2 h5 text-center bbarcode-text2">{{ barcode }}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -130,7 +136,7 @@
                     <div class="list-group list-group-flush">
                         <div class="row">
                             {% for barcode in assigned_offices['Γραφείο2'] %}
-                            <div class="col-2 barcode-text h5 text-center">{{ barcode }}</div>
+                            <div class="col-2 h5 text-center">{{ barcode }}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -144,7 +150,7 @@
                     <div class="list-group list-group-flush">
                         <div class="row">
                             {% for barcode in assigned_offices['Αιματολογικό'] %}
-                            <div class="col-2 barcode-text h5 text-center">{{ barcode }}</div>
+                            <div class="col-2 h5 text-center">{{ barcode }}</div>
                             {% endfor %}
                         </div>
                     </div>
@@ -172,23 +178,23 @@
                 </label>
             </div>
             <select class="form-select me-3" id="chemoSelect" aria-label="Chemo Select" style="width: 300px;">
-                <option value="Εισητήριο Ασθενούς">Εισιτήριο Ασθενούς</option>
+                <option value="Εισιτήριο Ασθενούς">Εισιτήριο Ασθενούς</option>
                 {% for office_number, barcodes in assigned_offices.items() %}
                     {% for barcode in barcodes %}
                         <option value="{{ barcode }}">{{ office_number }} - {{ barcode }}</option>
                     {% endfor %}
                 {% endfor %}
             </select>
-            <button type="button" class="btn btn-primary btn-lg" onclick="proceedToChemo()">Proceed</button>
+            <button type="button" class="btn btn-primary btn-lg" onclick="proceedToChemo()">ΣΥΝΕΧΕΙΑ</button>
             
         </div>
-        <div class="text-center barcode-text2">
+        <div class="text-center">
             <h1> ΕΙΣΙΤΗΡΙΑ ΣΕ ΑΝΑΜΟΝΗ ΘΕΡΑΠΕΙΑΣ</h1>
             
         </div>
         <div class="row col-12">
             {% for barcode in chemo_waiting_pool %}
-            <div class="col-sm-1 h3 barcode-text text-center">{{ barcode }}</div>
+            <div class="col-sm-1 h3 text-center">{{ barcode }}</div>
             {% endfor %}
             </div>
     
@@ -200,7 +206,7 @@
 </div>
     <!-- <h2>----------------------------</h2> -->
     <div class="container border border-lightgrey border-2 shadow-lg rounded mt-3 ">
-        <div class="text-center barcode-text2">
+        <div class="text-center">
             <h1>ΘΑΛΑΜΟΙ ΘΕΡΑΠΕΙΑΣ</h1>
         </div>
     
@@ -229,7 +235,7 @@
             </div>
         </div>
     
-        <button type="button" class="btn btn-primary btn-lg" onclick="proceedToTreatment()">Proceed</button>
+        <button type="button" class="btn btn-primary btn-lg" onclick="proceedToTreatment()">ΕΙΣΑΓΩΓΗ</button>
         </div>
 
     <div class="row mt-3">
@@ -241,7 +247,7 @@
                 <div class="list-group list-group-flush">
                     <div class="row">
                         {% for barcode in treatment_rooms[1] %}
-                         <div class="col-3 text-center barcode-text h5">{{ barcode }}</div>
+                         <div class="col-3 text-center h5">{{ barcode }}</div>
                         {% endfor %}
                     </div>
                 </div>
@@ -252,11 +258,13 @@
                 <div class="card-header h5 text-center">
                     Θάλαμος 2
                 </div>
-                <ul class="list-group list-group-flush">
-                    {% for barcode in treatment_rooms[2] %}
-                    <div class="col-3 text-center barcode-text h5">{{ barcode }}</div>
-                    {% endfor %}
-                </ul>
+                <div class="list-group list-group-flush">
+                    <div class="row">
+                        {% for barcode in treatment_rooms[2] %}
+                         <div class="col-3 text-center h5">{{ barcode }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md">
@@ -264,11 +272,13 @@
                 <div class="card-header h5 text-center">
                     Θάλαμος 3
                 </div>
-                <ul class="list-group list-group-flush">
+                <div class="list-group list-group-flush">
+                    <div class="row">
                     {% for barcode in treatment_rooms[3] %}
-                    <div class="col-3 text-center barcode-text h5">{{ barcode }}</div>
+                    <div class="col-3 text-center h5">{{ barcode }}</div>
                     {% endfor %}
-                </ul>
+                </div>
+                </div>
             </div>
         </div>
         <div class="col-md">
@@ -276,11 +286,13 @@
                 <div class="card-header h5 text-center">
                     Θάλαμος 4
                 </div>
-                <ul class="list-group list-group-flush">
-                    {% for barcode in treatment_rooms[4] %}
-                    <div class="col-3 text-center barcode-text h5">{{ barcode }}</div>
-                    {% endfor %}
-                </ul>
+                <div class="list-group list-group-flush">
+                    <div class="row">
+                        {% for barcode in treatment_rooms[4] %}
+                         <div class="col-3 text-center h5">{{ barcode }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -290,11 +302,13 @@
                 <div class="card-header h5 text-center">
                     Θάλαμος 5
                 </div>
-                <ul class="list-group list-group-flush">
-                    {% for barcode in treatment_rooms[5] %}
-                    <div class="col-3 text-center barcode-text h5">{{ barcode }}</div>
-                    {% endfor %}
-                </ul>
+                <div class="list-group list-group-flush">
+                    <div class="row">
+                        {% for barcode in treatment_rooms[5] %}
+                         <div class="col-3 text-center h5">{{ barcode }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md">
@@ -302,11 +316,13 @@
                 <div class="card-header h5 text-center">
                     Θάλαμος 6
                 </div>
-                <ul class="list-group list-group-flush">
-                    {% for barcode in treatment_rooms[6] %}
-                    <div class="col-3 text-center barcode-text h5">{{ barcode }}</div>
-                    {% endfor %}
-                </ul>
+                <div class="list-group list-group-flush">
+                    <div class="row">
+                        {% for barcode in treatment_rooms[6] %}
+                         <div class="col-3 text-center h5">{{ barcode }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md">
@@ -314,11 +330,13 @@
                 <div class="card-header h5 text-center">
                     Θάλαμος 7
                 </div>
-                <ul class="list-group list-group-flush">
-                    {% for barcode in treatment_rooms[7] %}
-                    <div class="col-3 text-center barcode-text h5">{{ barcode }}</div>
-                    {% endfor %}
-                </ul>
+                <div class="list-group list-group-flush">
+                    <div class="row">
+                        {% for barcode in treatment_rooms[7] %}
+                         <div class="col-3 text-center h5">{{ barcode }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md">
@@ -326,11 +344,13 @@
                 <div class="card-header h5 text-center">
                     Θάλαμος 8
                 </div>
-                <ul class="list-group list-group-flush">
-                    {% for barcode in treatment_rooms[8] %}
-                    <div class="col-3 text-center barcode-text h5">{{ barcode }}</div>
-                    {% endfor %}
-                </ul>
+                <div class="list-group list-group-flush">
+                    <div class="row">
+                        {% for barcode in treatment_rooms[8] %}
+                         <div class="col-3 text-center h5">{{ barcode }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -342,12 +362,12 @@
 <div class="container border border-primary border-2 shadow-lg rounded mt-3">
     <div class="row">
         <div class="col-4">
-            <div class="text-center barcode-text2">
+            <div class="text-center">
             <h2>Διαγραφή</h2>
             </div>
             <!-- <div class="h-25 blank-line"></div> -->
             <!-- <div class="col"><input type="text" id="removeBarcodeInput" placeholder="Αριθμός Εισιτηρίου"></div> -->
-            <input type="text" id="removeBarcodeInput" class="form-control" placeholder="Αριθμός Εισητηρίου">
+            <input type="text" id="removeBarcodeInput" class="form-control" placeholder="Αριθμός Εισιτηρίου">
             <div class="col"><button type="button" class="w-100 btn btn-primary btn-lg" onclick="removeBarcode()">Remove Ticket</button></div>
         </div>
 
@@ -355,14 +375,14 @@
         </div>
 
         <div class="col-4">
-            <div class="text-center barcode-text2">
+            <div class="text-center">
             <h2>Εισαγωγή</h2>
         </div>
             <input type="text" id="importTicketInput" class="form-control" placeholder="Αριθμός Εισιτηρίου">
         
             <select id="importDestinationSelect" class="form-select">
-                <option value="office_pool">Office Pool</option>
-                <option value="treatment_waiting_pool">Treatment Waiting Pool</option>
+                <option value="office_pool">Εισιτήρια</option>
+                <option value="treatment_waiting_pool">Αναμονή για Θεραπεία</option>
             </select>
         
         
