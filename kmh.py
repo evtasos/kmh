@@ -29,79 +29,93 @@ def issue_number():
 
 @app.route('/assign-office', methods=['POST'])
 def assign_office():
-    barcode = request.json['barcode']
-    office_number = request.json['office_number']
-    if barcode in office_pool:
-        office_pool.remove(barcode)
-        assigned_offices[office_number].append(barcode)
-        return jsonify({'message': f'Patient with barcode {barcode} assigned to office {office_number}.'})
-    return jsonify({'message': 'Barcode not found in the office pool.'}), 404
+    try:
+        barcode = request.json['barcode']
+        office_number = request.json['office_number']
+        if barcode in office_pool:
+            office_pool.remove(barcode)
+            assigned_offices[office_number].append(barcode)
+            return jsonify({'message': f'Patient with barcode {barcode} assigned to office {office_number}.'})
+        return jsonify({'message': 'Barcode not found in the office pool.'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  # Handle exceptions and return an error response
 
 @app.route('/add-to-chemo-waiting', methods=['POST'])
 def add_to_chemo_waiting():
-    barcode = request.json['barcode']
-    eligible = request.json['status']
+    try:
+        barcode = request.json['barcode']
+        eligible = request.json['status']
 
-    for office_number, barcodes in assigned_offices.items():
-        if barcode in barcodes:
-            barcodes.remove(barcode)
-            if eligible:
-                treatment_waiting_pool.append(barcode)
-                return jsonify({'message': f'Patient with barcode {barcode} added to chemo waiting pool. Removed from office {office_number}.'})
-            else:
-                return jsonify({'message': f'Patient with barcode {barcode} is not eligible for chemo. Removed from office {office_number}.'})
+        for office_number, barcodes in assigned_offices.items():
+            if barcode in barcodes:
+                barcodes.remove(barcode)
+                if eligible:
+                    treatment_waiting_pool.append(barcode)
+                    return jsonify({'message': f'Patient with barcode {barcode} added to chemo waiting pool. Removed from office {office_number}.'})
+                else:
+                    return jsonify({'message': f'Patient with barcode {barcode} is not eligible for chemo. Removed from office {office_number}.'})
 
-    return jsonify({'message': 'Barcode not found in the assigned offices.'}), 404
-
+        return jsonify({'message': 'Barcode not found in the assigned offices.'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  # Handle exceptions and return an error response
+    
 @app.route('/assign-treatment-room', methods=['POST'])
 def assign_treatment_room():
-    room_number = int(request.json['room_number'])
-    barcode = request.json['barcode']
+    try:    
+        room_number = int(request.json['room_number'])
+        barcode = request.json['barcode']
 
-    if barcode in treatment_waiting_pool:
-        treatment_rooms[room_number].append(barcode)
-        treatment_waiting_pool.remove(barcode)
-        return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} assigned to treatment room {room_number}.'})
-    return jsonify({'message': 'Barcode not found in the Chemo Waiting Pool.'}), 404
-
+        if barcode in treatment_waiting_pool:
+            treatment_rooms[room_number].append(barcode)
+            treatment_waiting_pool.remove(barcode)
+            return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} assigned to treatment room {room_number}.'})
+        return jsonify({'message': 'Barcode not found in the Chemo Waiting Pool.'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  # Handle exceptions and return an error response
+    
 @app.route('/rmv-barcode', methods=['POST'])
 def remove_barcode():
-    barcode = request.json['barcode']
+    try:
+        barcode = request.json['barcode']
 
-    if barcode in office_pool:
-        office_pool.remove(barcode)
-        return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left office'})
-    for office_number, barcodes in assigned_offices.items():
-        if barcode in barcodes:
-            barcodes.remove(barcode)
-            return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left offices'})
-    for room_number, barcodes in treatment_rooms.items():
-        if barcode in barcodes:
-            barcodes.remove(barcode)
-            return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left treatment'})
-    if barcode in treatment_waiting_pool:
-        treatment_waiting_pool.remove(barcode)
-        return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left chemo pool'})
-    return jsonify({'message': 'Barcode not found '}), 404
-
+        if barcode in office_pool:
+            office_pool.remove(barcode)
+            return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left office'})
+        for office_number, barcodes in assigned_offices.items():
+            if barcode in barcodes:
+                barcodes.remove(barcode)
+                return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left offices'})
+        for room_number, barcodes in treatment_rooms.items():
+            if barcode in barcodes:
+                barcodes.remove(barcode)
+                return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left treatment'})
+        if barcode in treatment_waiting_pool:
+            treatment_waiting_pool.remove(barcode)
+            return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left chemo pool'})
+        return jsonify({'message': 'Barcode not found '}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  # Handle exceptions and return an error response
+    
 @app.route('/import-ticket', methods=['POST'])
 def import_ticket():
-    data = request.json
-    ticket = data['ticket']
-    destination = data['destination']
-    if ticket in office_pool:
-            return jsonify({'message': f'Ticket {ticket} already exists.'})
-    if ticket in treatment_waiting_pool:
-            return jsonify({'message': f'Ticket {ticket} already exists.'})
-    if destination == 'office_pool':
-        office_pool.append(ticket)
-        return jsonify({'message': f'Ticket {ticket} imported to Office Pool.'})
-    if destination == 'treatment_waiting_pool':
-        treatment_waiting_pool.append(ticket)
-        return jsonify({'message': f'Ticket {ticket} imported to Treatmet Waiting Pool.'})
+    try:
+        data = request.json
+        ticket = data['ticket']
+        destination = data['destination']
+        if ticket in office_pool:
+                return jsonify({'message': f'Ticket {ticket} already exists.'})
+        if ticket in treatment_waiting_pool:
+                return jsonify({'message': f'Ticket {ticket} already exists.'})
+        if destination == 'office_pool':
+            office_pool.append(ticket)
+            return jsonify({'message': f'Ticket {ticket} imported to Office Pool.'})
+        if destination == 'treatment_waiting_pool':
+            treatment_waiting_pool.append(ticket)
+            return jsonify({'message': f'Ticket {ticket} imported to Treatmet Waiting Pool.'})
+        return jsonify({'message': 'Invalid destination.'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  # Handle exceptions and return an error response
     
-    return jsonify({'message': 'Invalid destination.'}), 400
-
 @app.route('/office-pool')
 def get_office_pool():
     return jsonify({'office_pool': office_pool})
