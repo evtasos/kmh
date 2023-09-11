@@ -8,7 +8,7 @@
 
 function printBarcode(barcode) {
     // Create a new window
-    var newWindow = window.open("", "Print Ticket", "width=500,height=500");
+    var newWindow = window.open("", "Print Ticket", "width=800,height=800");
 
     // Add the print-specific styles to the new window
     var cssLink = document.createElement("link");
@@ -23,7 +23,7 @@ function printBarcode(barcode) {
             <p>-------------------------------</p>
             <p>Γ.Α.Ν.Π. ΜΕΤΑΞΑ</p>
             <p>ΜΟΝΑΔΑ ΗΜΕΡΗΣΙΑΣ<br>ΝΟΣΗΛΕΙΑΣ</p>
-            <p>Ο ΑΡΙΘΜΟΣ ΔΕΝ ΑΝΤΙΣΤΟΙΧΕΙ</p>
+            <p>Ο ΑΡΙΘΜΟΣ ΔΕΝ ΑΝΤΙΣΤΟΙΧΕΙ ΣΕ ΣΕΙΡΑ ΠΡΟΤΕΡΑΙΟΤΗΤΑΣ</p>
             <p style="font-size: 24px;">${barcode}</p> <!-- Change the font-size here -->
             <p>-------------------------------</p>
         </div>

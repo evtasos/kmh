@@ -89,22 +89,17 @@ def import_ticket():
     data = request.json
     ticket = data['ticket']
     destination = data['destination']
-
+    if ticket in office_pool:
+            return jsonify({'message': f'Ticket {ticket} already exists.'})
+    if ticket in treatment_waiting_pool:
+            return jsonify({'message': f'Ticket {ticket} already exists.'})
     if destination == 'office_pool':
-        if ticket in office_pool:
-            return jsonify({'message': f'Ticket {ticket} already exists.'})
-        else :
-            office_pool.append(ticket)
-            return jsonify({'message': f'Ticket {ticket} imported to Office Pool.'})
-
+        office_pool.append(ticket)
+        return jsonify({'message': f'Ticket {ticket} imported to Office Pool.'})
     if destination == 'treatment_waiting_pool':
-        if ticket in treatment_waiting_pool:
-            return jsonify({'message': f'Ticket {ticket} already exists.'})
-        else:
-            treatment_waiting_pool.append(ticket)
-            return jsonify({'message': f'Ticket {ticket} imported to Treatmet Waiting Pool.'})
-    # Add handling for other destinations (assigned_offices, treatment_waiting_pool, treatment_rooms) here.
-
+        treatment_waiting_pool.append(ticket)
+        return jsonify({'message': f'Ticket {ticket} imported to Treatmet Waiting Pool.'})
+    
     return jsonify({'message': 'Invalid destination.'}), 400
 
 @app.route('/office-pool')
