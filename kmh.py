@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
-app.config['DEBUG'] = False
+app.config['DEBUG'] = True
 
 # Counter for generating patient numbers
 patient_counter = 1
@@ -132,23 +132,27 @@ def get_chemo_waiting_pool():
 def get_treatment_rooms():
     return jsonify({'treatment_rooms': treatment_rooms})
 
-@app.route('/pools')
+@app.route('/')
+def start():
+    return render_template('buttons.html')
+
+@app.route('/nurses')
 def view_pools():
     office_numbers = sorted(assigned_offices.keys())
     return render_template('nurses.html', office_pool=office_pool, assigned_offices=assigned_offices,
                            chemo_waiting_pool=treatment_waiting_pool, treatment_rooms=treatment_rooms,
                            office_numbers=office_numbers)
-@app.route('/pools2')
-def view_pools3():
+@app.route('/doctors')
+def view_pools2():
     office_numbers = sorted(assigned_offices.keys())
     return render_template('doctors.html', office_pool=office_pool, assigned_offices=assigned_offices,
                            chemo_waiting_pool=treatment_waiting_pool, treatment_rooms=treatment_rooms,
                            office_numbers=office_numbers)
 
-@app.route('/pools3')
-def view_pools2():
+@app.route('/patients')
+def view_pools3():
     office_numbers = sorted(assigned_offices.keys())
-    return render_template('nursesdb.html', office_pool=office_pool, assigned_offices=assigned_offices,
+    return render_template('patients.html', office_pool=office_pool, assigned_offices=assigned_offices,
                            chemo_waiting_pool=treatment_waiting_pool, treatment_rooms=treatment_rooms,
                            office_numbers=office_numbers)
 
@@ -170,5 +174,5 @@ def reset():
     treatment_rooms = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}
     return jsonify({'message': 'System reset successfully.'})
 
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0')
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
