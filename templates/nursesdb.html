@@ -1,0 +1,54 @@
+import sqlite3
+from flask import Flask, request, jsonify, render_template
+
+app = Flask(__name__)
+
+# Create a SQLite database in-memory
+db = sqlite3.connect(':memory:')
+cursor = db.cursor()
+
+# Define tables for storing data
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS patient_data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        barcode TEXT,
+        office TEXT,
+        status BOOLEAN,
+        room_number INTEGER
+    )
+''')
+
+@app.route('/issue-number')
+def issue_number():
+    # Your logic for issuing numbers here
+    # Instead of global variables, insert data into the SQLite database
+    cursor.execute("INSERT INTO patient_data (barcode, office, status, room_number) VALUES (?, ?, ?, ?)",
+                   ('A123', 'Γραφείο1', False, 0))
+    db.commit()
+    
+    # Return a response
+
+@app.route('/assign-office', methods=['POST'])
+def assign_office():
+    # Your logic for assigning offices here
+    # Instead of global variables, update data in the SQLite database
+    cursor.execute("UPDATE patient_data SET office = ?, room_number = ? WHERE barcode = ?",
+                   ('Γραφείο2', 0, 'A123'))
+    db.commit()
+
+    # Return a response
+
+@app.route('/add-to-chemo-waiting', methods=['POST'])
+def add_to_chemo_waiting():
+    # Your logic for adding to chemo waiting pool here
+    # Instead of global variables, update data in the SQLite database
+    cursor.execute("UPDATE patient_data SET status = ?, room_number = ? WHERE barcode = ?",
+                   (True, 0, 'A123'))
+    db.commit()
+
+    # Return a response
+
+# Other routes and logic follow the same pattern of using SQLite instead of global variables
+
+if __name__ == '__main__':
+    app.run(debug=True)
