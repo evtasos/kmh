@@ -47,17 +47,20 @@
         .equal-height {
             height: calc(100% / 3); /* Set equal height for 3 items */
         }
+        .bbarcode-text {
+            color: #bd959f   ; 
+            }
     </style>
 </head>
 <body>
     <div class="container-fluid h-100"> <!-- Use a fluid container and h-100 to take up full height -->
         <div class="row h-100"> <!-- Use h-100 to take up full height -->
-            <div class="col-md-3">
+            <div class="col-md-3 text-center">
                 <div class="card h-100"> <!-- Use h-100 to take up full height -->
-                    <div class="card-header">Assigned Offices</div>
+                    <div class="card-header bbarcode-text">Assigned Offices</div>
                     <div class="card-body">
                         {% for office_number, patients in assigned_offices.items() %}
-                        <div class="row equal-height"> <!-- Use equal-height class to set equal heights -->
+                        <div class="row equal-height bbarcode-text"> <!-- Use equal-height class to set equal heights -->
                             <div class="col-12">
                                 <span class="room-name h1">{{ office_number }}</span>
                                 <ul>

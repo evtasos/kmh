@@ -27,38 +27,19 @@ def issue_number():
     office_pool.append(barcode)
     return jsonify({'barcode': barcode})
 
-# @app.route('/assign-office', methods=['POST'])
-# def assign_office():
-#     try:
-#         barcode = request.json['barcode']
-#         office_number = request.json['office_number']
-#         if barcode in office_pool:
-#             office_pool.remove(barcode)
-#             assigned_offices[office_number].append(barcode)
-#             return jsonify({'message': f'Patient with barcode {barcode} assigned to office {office_number}.'})
-#         return jsonify({'message': 'Barcode not found in the office pool.'}), 404
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500  # Handle exceptions and return an error response
 @app.route('/assign-office', methods=['POST'])
 def assign_office():
     try:
-        barcodes = request.json['barcodes']  # Expecting a list of barcodes
-        print(type(barcodes))
+        barcode = request.json['barcode']
         office_number = request.json['office_number']
-        
-        # Loop through the list of barcodes and process each one
-        for barcode in barcodes:
-            if barcode in office_pool:
-                office_pool.remove(barcode)
-                assigned_offices[office_number].append(barcode)
-            else:
-                # Handle cases where a barcode is not found
-                return jsonify({'message': f'Barcode {barcode} not found in the office pool.'}), 404
-
-        return jsonify({'message': f'Successfully assigned {len(barcodes)} barcode(s) to office {office_number}.'})
+        if barcode in office_pool:
+            office_pool.remove(barcode)
+            assigned_offices[office_number].append(barcode)
+            return jsonify({'message': f'Patient with barcode {barcode} assigned to office {office_number}.'})
+        return jsonify({'message': 'Barcode not found in the office pool.'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500  # Handle exceptions and return an error response
-    
+
 @app.route('/add-to-chemo-waiting', methods=['POST'])
 def add_to_chemo_waiting():
     try:

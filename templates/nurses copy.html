@@ -99,9 +99,8 @@
                         {% endfor %}
                     </select>
                 </div>
-                
                 <div class="col-md">
-                    <select id="barcodeSelect" class="form-select form-select-lg mb-3" aria-label="Default select example" multiple>
+                    <select id="barcodeSelect" class="form-select form-select-lg mb-3" aria-label="Default select example">
                         <option value="Εισιτήρια">Εισιτήρια</option>
                         {% for barcode in office_pool %}
                         <option value="{{ barcode }}">{{ barcode }}</option>

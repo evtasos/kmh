@@ -87,17 +87,16 @@ function issueTicket() {
 function assignToOffice() {
     const barcodeSelect = document.getElementById('barcodeSelect');
     const officeSelect = document.getElementById('officeSelect');
-    const selectedOptions = Array.from(barcodeSelect.selectedOptions);
-    const selectedBarcodes = selectedOptions.map(option => option.value);
+    const barcode = barcodeSelect.value;
     const officeNumber = officeSelect.value;
-    
+
     fetch('/assign-office', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            barcodes: selectedBarcodes,
+            barcode: barcode,
             office_number: officeNumber
         })
     })
