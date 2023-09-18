@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Assigned Offices and Treatment Rooms</title>
+    <title>ΑΣΘΕΝΕΙΣ</title>
     <!-- Link to Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
@@ -48,7 +48,7 @@
             height: calc(100% / 3); /* Set equal height for 3 items */
         }
         .bbarcode-text {
-            color: #bd959f   ; 
+            color: #00008B   ; 
             }
     </style>
 </head>
@@ -57,17 +57,15 @@
         <div class="row h-100"> <!-- Use h-100 to take up full height -->
             <div class="col-md-3 text-center">
                 <div class="card h-100"> <!-- Use h-100 to take up full height -->
-                    <div class="card-header bbarcode-text">Assigned Offices</div>
+                    <div class="card-header">ΓΡΑΦΕΙΑ ΙΑΤΡΩΝ</div>
                     <div class="card-body">
                         {% for office_number, patients in assigned_offices.items() %}
                         <div class="row equal-height bbarcode-text"> <!-- Use equal-height class to set equal heights -->
                             <div class="col-12">
-                                <span class="room-name h1">{{ office_number }}</span>
+                                <span class="room-name h1 text-center">{{ office_number }}</span>
                                 <ul>
                                     {% for patient in patients %}
-                                    <li>
                                         <span class="barcode h1">{{ patient }}</span>
-                                    </li>
                                     {% endfor %}
                                 </ul>
                             </div>
@@ -77,20 +75,18 @@
                 </div>
             </div>
             <div class="col-md-9">
-                <div class="card h-100"> <!-- Use h-100 to take up full height -->
-                    <div class="card-header">Treatment Rooms</div>
+                <div class="card h-100"> 
+                    <div class="card-header">ΘΑΛΑΜΟΙ</div>
                     <div class="card-body">
                         {% for room_number, patients in treatment_rooms.items() %}
-                        <div class="row equal-height"> <!-- Use equal-height class to set equal heights -->
+                        <div class="row equal-height"> 
                             <div class="col-12">
-                                <span class="room-name h1">Treatment Room {{ room_number }}</span>
-                                <ul>
+                                <span class="room-name h1 bbarcode-text">Treatment Room {{ room_number }} :</span>
+                                <div class="d-flex flex-wrap">
                                     {% for patient in patients %}
-                                    <li>
-                                        <span class="barcode h1">{{ patient }}</span>
-                                    </li>
+                                        <span class="badge badge-primary mr-2">{{ patient }}</span>
                                     {% endfor %}
-                                </ul>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}

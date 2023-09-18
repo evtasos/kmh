@@ -81,9 +81,6 @@
             
         </div>
 
-        <!-- <div class="row text-center">
-        <h2>----------------------------</h2>
-        </div> -->
         <div class="container border border-primary border-2 shadow-lg rounded mt-3">
             <div class="row text-center bbarcode-text">
             <h1>ΓΡΑΦΕΙΑ ΙΑΤΡΩΝ</h1>
@@ -108,11 +105,9 @@
                         {% endfor %}
                     </select>
                 </div>
-                <!-- <div class="col-md-4"> -->
-                    <!-- <div class="d-grid gap-2 col-4 mx-auto"></div> -->
+                
                     <button type="button" class="btn btn-primary btn-lg" onclick="assignToOffice()">ΕΙΣΑΓΩΓΗ</button>
-                    <!-- </div> -->
-                <!-- </div> -->
+                
             </div>
         
     
@@ -163,8 +158,7 @@
         </div>
         
     </div>
-    <!-- <h2>----------------------------</h2> -->
-    
+        
     <div class="container  shadow-lg rounded mt-3">
         <div class="d-flex align-items-center">
             <div class="bbarcode-text3">
@@ -230,8 +224,8 @@
         </div>
         <div class="col-md">
             <div class="form-group">
-                <!-- <label for="chemoBarcodeSelect">Select Chemo Barcode</label> -->
-                <select id="chemoBarcodeSelect" class="form-select form-select-lg">
+                
+                <select id="chemoBarcodeSelect" class="form-select form-select-lg" multiple>
                     <option value="Εισιτήριο">Εισιτήριο</option>
                     {% for barcode in chemo_waiting_pool %}
                         <option value="{{ barcode }}">{{ barcode }}</option>
@@ -370,9 +364,7 @@
             <div class="text-center">
             <h2>Διαγραφή</h2>
             </div>
-            <!-- <div class="h-25 blank-line"></div> -->
-            <!-- <div class="col"><input type="text" id="removeBarcodeInput" placeholder="Αριθμός Εισιτηρίου"></div> -->
-            <input type="text" id="removeBarcodeInput" class="form-control" placeholder="Αριθμός Εισιτηρίου">
+                <input type="text" id="removeBarcodeInput" class="form-control" placeholder="Αριθμός Εισιτηρίου">
             <div class="col"><button type="button" class="w-100 btn btn-primary btn-lg" onclick="removeBarcode()">Remove Ticket</button></div>
         </div>
 

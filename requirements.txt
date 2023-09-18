@@ -1,1 +1,2 @@
 Flask==2.2.1
+gunicorn==21.2.0

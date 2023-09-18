@@ -3,9 +3,11 @@
 * Copyright 2013-2023 Start Bootstrap
 * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-shop-homepage/blob/master/LICENSE)
 */
+
 // This file is intentionally blank
 // Use this file to add JavaScript to your project
 
+// Function to print a barcode
 function printBarcode(barcode) {
     // Create a new window
     var newWindow = window.open("", "Print Ticket", "width=800,height=800");
@@ -44,21 +46,12 @@ function printBarcode(barcode) {
     }, 1000); // Adjust the delay (in milliseconds) as needed
 }
 
-
-// function printBarcode(barcode) {
-// // Create a new window
-// var newWindow = window.open("", "Print Ticket", "width=500,height=500");
-// // Write the content to the new window with text-align: center and line-height: 150px
-// newWindow.document.write(`<p style="text-align: center;">Your ticket is:</p><p style="text-align: center; ">${barcode}</p><p style="text-align: center; font-size: 8px;">Thank you!</p>`);
-// newWindow.document.title = "Print Ticket";
-// // Print the new window
-// newWindow.print();
-// // Close the new window
-// newWindow.close();
-// }
-
+// Function to issue a ticket
 function issueTicket() {
+    // Check if the "Print Ticket" checkbox is checked
     const printOption = document.getElementById('printTicket').checked;
+
+    // Fetch data from the server
     fetch('/issue-number')
         .then(response => response.json())
         .then(data => {
@@ -70,27 +63,31 @@ function issueTicket() {
             const messageContainer = document.querySelector('.message-container');
             messageContainer.style.display = 'block';
 
-            //print(data.barcode)
-            if (printOption){
+            // Call the printBarcode function if the printOption is enabled
+            if (printOption) {
                 printBarcode(barcode);
             }
 
-            setTimeout(function() {
-            location.reload(); // Refresh the page after a certain duration
-        }, 1000); // Refresh after 1 seconds (1000 milliseconds)
+            // Refresh the page after a certain duration
+            setTimeout(function () {
+                location.reload();
+            }, 1000); // Refresh after 1 second (1000 milliseconds)
         })
         .catch(error => {
             console.error('Error:', error);
         });
 }
 
+// Function to assign tickets to an office
 function assignToOffice() {
+    // Get selected barcodes and office number from the form
     const barcodeSelect = document.getElementById('barcodeSelect');
     const officeSelect = document.getElementById('officeSelect');
     const selectedOptions = Array.from(barcodeSelect.selectedOptions);
     const selectedBarcodes = selectedOptions.map(option => option.value);
     const officeNumber = officeSelect.value;
-    
+
+    // Send a POST request to the server to assign tickets
     fetch('/assign-office', {
         method: 'POST',
         headers: {
@@ -103,33 +100,40 @@ function assignToOffice() {
     })
     .then(response => response.json())
     .then(data => {
+        // Update the result message
         const resultMessage = document.getElementById('resultMessage');
         resultMessage.innerText = data.message;
+
         // Show the message container
         const messageContainer = document.querySelector('.message-container');
         messageContainer.style.display = 'block';
-        // Reset the select element to "office" as the default option
+
+        // Reset the select elements
         const officeSelect = document.getElementById('officeSelect');
-        officeSelect.selectedIndex = 0; // Set the selected index to 0 (which is the "office" option)
+        officeSelect.selectedIndex = 0;
         const barcodeSelect = document.getElementById('barcodeSelect');
         barcodeSelect.selectedIndex = 0;
-        setTimeout(function() {
-            location.reload(); // Refresh the page after a certain duration
-        }, 1000); // Refresh after 1 seconds (5000 milliseconds)
+
+        // Refresh the page after a certain duration
+        setTimeout(function () {
+            location.reload();
+        }, 1000); // Refresh after 1 second (1000 milliseconds)
     })
     .catch(error => {
         console.error('Error:', error);
     });
 }
 
+// Function to proceed to chemo
 function proceedToChemo() {
+    // Get selected barcode and eligibility status from the form
     const chemoSelect = document.getElementById('chemoSelect');
     const barcode = chemoSelect.value;
-
     const eligibleYes = document.getElementById('eligibleYes');
     const eligibleNo = document.getElementById('eligibleNo');
     const eligibleStatus = eligibleYes.checked ? true : false;
 
+    // Send a POST request to the server to proceed to chemo
     fetch('/add-to-chemo-waiting', {
         method: 'POST',
         headers: {
@@ -142,30 +146,38 @@ function proceedToChemo() {
     })
     .then(response => response.json())
     .then(data => {
+        // Update the result message
         const resultMessage = document.getElementById('resultMessage');
         resultMessage.innerText = data.message;
-        // Show the message container
 
+        // Show the message container
         const messageContainer = document.querySelector('.message-container');
         messageContainer.style.display = 'block';
+
+        // Reset the select element
         const chemoSelect = document.getElementById('chemoSelect');
         chemoSelect.selectedIndex = 0;
-        setTimeout(function() {
-            location.reload(); // Refresh the page after a certain duration
-        }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+
+        // Refresh the page after a certain duration
+        setTimeout(function () {
+            location.reload();
+        }, 1000); // Refresh after 1 second (1000 milliseconds)
     })
     .catch(error => {
         console.error('Error:', error);
     });
 }
 
+// Function to proceed to treatment
 function proceedToTreatment() {
+    // Get selected room number and chemo barcodes from the form
     const roomSelect = document.getElementById('roomSelect');
     const roomNumber = roomSelect.value;
-
     const chemoBarcodeSelect = document.getElementById('chemoBarcodeSelect');
-    const barcode = chemoBarcodeSelect.value;
+    const selectedOptions = Array.from(chemoBarcodeSelect.selectedOptions);
+    const selectedBarcodes = selectedOptions.map(option => option.value);
 
+    // Send a POST request to the server to assign treatment rooms
     fetch('/assign-treatment-room', {
         method: 'POST',
         headers: {
@@ -173,38 +185,42 @@ function proceedToTreatment() {
         },
         body: JSON.stringify({
             room_number: roomNumber,
-            barcode: barcode
+            barcodes: selectedBarcodes
         })
     })
     .then(response => response.json())
     .then(data => {
+        // Update the result message
         const resultMessage = document.getElementById('resultMessage');
-        if (data.barcode) {
-            resultMessage.innerText = `Proceeded to Treatment Room ${roomNumber}. Barcode: ${data.barcode}`;
-            // Show the message container
-            const messageContainer = document.querySelector('.message-container');
-            messageContainer.style.display = 'block';
-        } 
-        else {
+        if (data.barcodes.length > 0) {
+            resultMessage.innerText = `Proceeded to Treatment Room ${roomNumber}. Barcode: ${data.barcodes}`;
+        } else {
             resultMessage.innerText = `No patient available in the Chemo Waiting Pool.`;
-            // Show the message container
-            const messageContainer = document.querySelector('.message-container');
-            messageContainer.style.display = 'block';
         }
+
+        // Show the message container
+        const messageContainer = document.querySelector('.message-container');
+        messageContainer.style.display = 'block';
+
+        // Reset the select elements
         const roomSelect = document.getElementById('roomSelect');
         roomSelect.selectedIndex = 0;
         const chemoBarcodeSelect = document.getElementById('chemoBarcodeSelect');
-        chemoBarcodeSelect.selectedIndex = 0;
-        setTimeout(function() {
-            location.reload(); // Refresh the page after a certain duration
-        }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+        chemoBarcodeSelect.selectedIndex = -1;
+
+        // Refresh the page after a certain duration
+        setTimeout(function () {
+            location.reload();
+        }, 1000); // Refresh after 1 second (1000 milliseconds)
     })
     .catch(error => {
         console.error('Error:', error);
     });
 }
 
+// Function to remove a barcode
 function removeBarcode() {
+    // Get the barcode input value
     const barcodeInput = document.getElementById('removeBarcodeInput');
     const barcode = barcodeInput.value;
 
@@ -213,6 +229,7 @@ function removeBarcode() {
         return;
     }
 
+    // Send a POST request to the server to remove a barcode
     fetch('/rmv-barcode', {
         method: 'POST',
         headers: {
@@ -225,30 +242,21 @@ function removeBarcode() {
     .then(response => response.json())
     .then(data => {
         alert(data.message); // Display a message to the user.
-        // const resultMessage = document.getElementById('resultMessage');
-        
-        // if (data.message) {
-        //     resultMessage.innerText = data.message;
-        //     // Show the message container
-        //     const messageContainer = document.querySelector('.message-container');
-        //     messageContainer.style.display = 'block';
-        // } else {
-        //     resultMessage.innerText = 'Error: Barcode not found';
-        //     // Show the message container
-        //     const messageContainer = document.querySelector('.message-container');
-        //     messageContainer.style.display = 'block';
-        // }
-        barcodeInput.value = '';
-        setTimeout(function() {
-            location.reload(); // Refresh the page after a certain duration
-        }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+        barcodeInput.value = ''; // Clear the input field.
+
+        // Refresh the page after a certain duration
+        setTimeout(function () {
+            location.reload();
+        }, 1000); // Refresh after 1 second (1000 milliseconds)
     })
     .catch(error => {
         console.error('Error:', error);
     });
 }
 
+// Function to import a ticket
 function importTicket() {
+    // Get ticket and destination values from the form
     const ticketInput = document.getElementById("importTicketInput");
     const destinationSelect = document.getElementById("importDestinationSelect");
 
@@ -260,7 +268,7 @@ function importTicket() {
         return;
     }
 
-    // Send a request to your Flask endpoint to handle the import action.
+    // Send a POST request to the server to handle the import action
     fetch('/import-ticket', {
         method: 'POST',
         headers: {
@@ -275,24 +283,25 @@ function importTicket() {
     .then(data => {
         alert(data.message); // Display a message to the user.
         ticketInput.value = ''; // Clear the input field.
-        setTimeout(function() {
-            location.reload(); // Refresh the page after a certain duration
-        }, 1000); // Refresh after 5 seconds (5000 milliseconds)
-    
+
+        // Refresh the page after a certain duration
+        setTimeout(function () {
+            location.reload();
+        }, 1000); // Refresh after 1 second (1000 milliseconds)
     })
     .catch(error => {
         console.error('Error:', error);
     });
 }
 
+// Function to confirm an action
 function confirmAction() {
-    
     if (confirm("Are you sure you want to perform this action?")) {
         // User confirmed, perform the action
-        fetch('/reset')
-        setTimeout(function() {
+        fetch('/reset');
+        setTimeout(function () {
             location.reload(); // Refresh the page after a certain duration
-        }, 1000); // Refresh after 5 seconds (5000 milliseconds)
+        }, 1000); // Refresh after 1 second (1000 milliseconds)
     } else {
         // User canceled, do nothing
     }
