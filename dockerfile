@@ -26,4 +26,4 @@ EXPOSE 5566
 ENV NAME World
 
 # Run app.py when the container launches
-CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:5566", "--certfile=cert.pem", "--keyfile=key.pem", "--error-logfile", "/app/kmh_error.log", "--access-logfile", "/app/kmh_access.log", "kmh:app"]
+CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:5566", "--certfile=cert.pem", "--keyfile=key.pem", "--error-logfile", "/app/kmh_error.log", "--access-logfile", "/app/kmh_access.log", "app:app"]
