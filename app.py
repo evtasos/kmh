@@ -176,6 +176,7 @@ def start():
 @app.route('/nurses')
 def view_pools():
     office_numbers = sorted(assigned_offices.keys())
+    sorted_office_pools = sorted(office_pool, key=lambda x: int(x[1:]))
     return render_template('nurses.html', office_pool=office_pool, assigned_offices=assigned_offices,
                            chemo_waiting_pool=treatment_waiting_pool, treatment_rooms=treatment_rooms,
                            office_numbers=office_numbers)
