@@ -293,6 +293,22 @@ function importTicket() {
         console.error('Error:', error);
     });
 }
+// Function to get stats
+function showstats() {
+    fetch('/numbers')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById("total_patients").innerText = data.total_patients;
+        document.getElementById("treated_patients").innerText = data.treated_patients;
+        document.getElementById("treated_percentage").innerText = data.treated_percentage;
+    })
+    .catch(error => console.error('Error fetching statistics:', error));
+}
 
 // Function to confirm an action
 function confirmAction() {

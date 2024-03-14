@@ -1,101 +1,88 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>ΑΣΘΕΝΕΙΣ</title>
-    <!-- Link to Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Custom CSS to style the page */
         html, body {
             height: 100%;
         }
-
         body {
             background-image: url('../static/assets/clouds.jpg');
             background-color: #f0f0f0;
-            padding-top: 20px;
+            padding: 20px;
         }
         .card {
             margin-bottom: 20px;
-            background-image: url('../static/assets/body-blue.jpg'); /* Add your background image path here */
+            background-image: url('../static/assets/body-blue.jpg');
             background-size: cover;
         }
         .card-header {
             background-color: #007bff;
             color: #fff;
             font-weight: bold;
+            font-size: 26px;
+            padding: 10px;
         }
         .card-body {
-            display: flex;
-            flex-direction: column;
             padding: 10px;
-            height: 100%; /* Make the card body take up full height */
-        }
-        .card-body ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        .card-body li {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
         }
         .room-name {
-            flex-basis: 70%;
+            font-size: 26px;
+            font-weight: bold;
         }
-        .equal-height {
-            height: calc(100% / 3); /* Set equal height for 3 items */
+        .patient-text {
+            color: #DC3545;
+            font-size: 26px;
+            font-weight: bold; 
         }
-        .bbarcode-text {
-            color: #00008B   ; 
-            }
     </style>
 </head>
 <body>
-    <div class="container-fluid h-100"> <!-- Use a fluid container and h-100 to take up full height -->
-        <div class="row h-100"> <!-- Use h-100 to take up full height -->
-            <div class="col-md-3 text-center">
-                <div class="card h-100"> <!-- Use h-100 to take up full height -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
                     <div class="card-header">ΓΡΑΦΕΙΑ ΙΑΤΡΩΝ</div>
                     <div class="card-body">
                         {% for office_number, patients in assigned_offices.items() %}
-                        <div class="row equal-height bbarcode-text"> <!-- Use equal-height class to set equal heights -->
-                            <div class="col-12">
-                                <span class="room-name h1 text-center">{{ office_number }}</span>
-                                <ul>
-                                    {% for patient in patients %}
-                                        <span class="barcode h1">{{ patient }}</span>
-                                    {% endfor %}
-                                </ul>
+                            <div class="row">
+                                <div class="col">
+                                    <span class="room-name">{{ office_number }}</span>
+                                    <ul>
+                                        {% for patient in patients %}
+                                            <li><span class="patient-text">{{ patient }}</span></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
-            <div class="col-md-9">
-                <div class="card h-100"> 
+            <div class="col-md-6">
+                <div class="card">
                     <div class="card-header">ΘΑΛΑΜΟΙ</div>
                     <div class="card-body">
                         {% for room_number, patients in treatment_rooms.items() %}
-                        <div class="row equal-height"> 
-                            <div class="col-12">
-                                <span class="room-name h1 bbarcode-text">Treatment Room {{ room_number }} :</span>
-                                <div class="d-flex flex-wrap">
-                                    {% for patient in patients %}
-                                        <span class="badge badge-primary mr-2">{{ patient }}</span>
-                                    {% endfor %}
+                            <div class="row">
+                                <div class="col">
+                                    <span class="room-name">ΘΑΛΑΜΟΣ {{ room_number }}</span>
+                                    <ul>
+                                        {% for patient in patients %}
+                                            <li><span class="patient-text">{{ patient }}</span></li>
+                                        {% endfor %}
+                                    </ul>
                                 </div>
                             </div>
-                        </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
-        // Get previous data from localStorage or initialize it as an empty object
         let previousData = JSON.parse(localStorage.getItem('previousData')) || {};
 
         function fetchAndCheckData() {
@@ -117,21 +104,19 @@
                 previousData.assignedOffices = currentAssignedOfficesData;
                 previousData.treatmentRooms = currentTreatmentRoomsData;
 
-                // Store current data in localStorage
                 localStorage.setItem('previousData', JSON.stringify(previousData));
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
         }
-    
-        // Fetch data initially and then every 5 seconds
+
         fetchAndCheckData();
-        setInterval(fetchAndCheckData, 5000); // Adjust the interval as needed
+        setInterval(fetchAndCheckData, 5000);
     </script>
-    <!-- Link to Bootstrap JS and jQuery (required for Bootstrap) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.min.js"></script>
-  </body>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 </html>

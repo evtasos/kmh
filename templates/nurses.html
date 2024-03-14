@@ -42,6 +42,13 @@
             /* background-color: #aac0d8; */
             
         }
+        .bold {
+            font-weight: bold;
+            }
+
+            .text-right {
+        text-align: right;
+    }
         
     </style>
 
@@ -369,6 +376,20 @@
         </div>
 
         <div class="col-4">
+            <div class="col"><button type="button" class="w-100 btn btn-primary btn-lg" onclick="showstats()">ΣΤΑΤΙΣΤΙΚΑ</button></div>
+            <div class="row mt-3">
+                <div class="col-6 bold">Σύνολο ασθενών</div>
+                <div class="col-6 text-center bold" id="total_patients"></div>
+                
+            </div>
+            <div class="row mt-0">
+                <div class="col-6 bold">Ολοκλήρωσαν θεραπεία</div>
+                <div class="col-6 text-center bold" id="treated_patients"></div>
+            </div>
+            <div class="row mt-0">
+                <div class="col-6 bold">Ποσοστό ολοκλήρωσης</div>
+                <div class="col-6 text-center bold" id="treated_percentage"></div>
+            </div>
         </div>
 
         <div class="col-4">

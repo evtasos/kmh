@@ -5,7 +5,7 @@ app.config['DEBUG'] = True
 
 # Initialize a patient counter
 patient_counter = 1
-
+treated_patients = 0
 # Lists to store patient data
 issued_numbers = []
 office_pool = []
@@ -76,6 +76,7 @@ def add_to_chemo_waiting():
 # Route to assign patients to a treatment room
 @app.route('/assign-treatment-room', methods=['POST'])
 def assign_treatment_room():
+    global treated_patients
     try:
         room_number = int(request.json['room_number'])
         barcodes = request.json['barcodes']
@@ -86,6 +87,7 @@ def assign_treatment_room():
                 treatment_rooms[room_number].append(barcode)
                 treatment_waiting_pool.remove(barcode)
                 assigned_barcodes.append(barcode)
+                treated_patients += 1
 
         if assigned_barcodes:
             return jsonify({'barcodes': assigned_barcodes, 'message': f'Patients assigned to treatment room {room_number}.'})
@@ -176,8 +178,8 @@ def start():
 @app.route('/nurses')
 def view_pools():
     office_numbers = sorted(assigned_offices.keys())
-    sorted_office_pools = sorted(office_pool, key=lambda x: int(x[1:]))
-    return render_template('nurses.html', office_pool=office_pool, assigned_offices=assigned_offices,
+    sorted_office_pool = sorted(office_pool, key=lambda x: int(x[1:]))
+    return render_template('nurses.html', office_pool=sorted_office_pool, assigned_offices=assigned_offices,
                            chemo_waiting_pool=treatment_waiting_pool, treatment_rooms=treatment_rooms,
                            office_numbers=office_numbers)
 
@@ -198,7 +200,25 @@ def view_pools3():
 # Route to get the list of issued patient numbers
 @app.route('/numbers')
 def view_numbers():
-    return jsonify({'issued_numbers': issued_numbers})
+    # Get the total number of patients
+    total_patients = len(issued_numbers)
+
+    # Get the number of treated patients
+    #treated_patients = len([barcode for barcodes in treatment_rooms.values() for barcode in barcodes])
+
+    # Calculate the percentage of treated patients
+    #treated_percentage = round(treated_patients / total_patients, 2)*100 + "%"
+    if total_patients != 0:
+        treated_percentage = round((treated_patients / total_patients) * 100, 2)
+        treated_percentage = str(treated_percentage) + "%"
+    else:
+        treated_percentage = "0%"
+
+    return {
+        "total_patients": total_patients,
+        "treated_patients": treated_patients,
+        "treated_percentage": treated_percentage,
+    }
 
 # Route to reset the system
 @app.route('/reset')
