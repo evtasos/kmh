@@ -1,157 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="<KEY>" crossorigin="anonymous">
-    <link rel="stylesheet" href="./style.css">
-    <title>Hospital Management System</title>
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offices and Treatment Rooms with Bootstrap</title>
+  <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
     body {
-        background-image: url('./assets/clouds.jpg');
-        background-color: #f0f0f0;
-        padding: 20px;
+      background-image: url('../static/assets/clouds.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
     }
-    
+    /* Adjust height of rows to one-third of viewport height */
+    .one-third-height {
+      height: calc(100vh / 3);
+    }
+    /* Add background color to cards */
     .card {
-        margin-bottom: 20px;
-        background-image: url('./assets/body-blue.jpg');
-        background-size: cover;
+      background-color: rgba(218, 214, 214, 0.9); /* Use rgba for transparency */
+      height: 80%; /* Set card height to 100% of parent container */
+      /* border: 1px solid #d31c1c; */
     }
-    
     .card-header {
-        background-color: #007bff;
-        color: #fff;
-        font-weight: bold;
-        font-size: 26px;
-        padding: 10px;
+        color: #333;
+        background-color: #f8b8d0;
     }
-    
-    .card-body {
-        padding: 10px;
+    .new-entry {
+    background-color: red; /* or any other desired highlighting style */
     }
-    
-    .table {
-        margin-bottom: 0;
-    }
-    
-    .table td,.table th {
-        padding: 0.75rem;
-        vertical-align: top;
-        border-top: 1px solid #dee2e6;
-    }
-    
-    .table thead th {
-        vertical-align: bottom;
-        border-bottom: 2px solid #dee2e6;
-    }
-    
-    .table-bordered {
-        border: 1px solid #dee2e6;
-    }
-    
-    .table-bordered td,.table-bordered th {
-        border: 1px solid #dee2e6;
-    }
-    
-    .text-center {
-        text-align: center;
-    }
-    
-    .h3 {
-        font-size: 24px;
-    }
-    
-    .patient-text {
-        color: #DC3545;
-        font-size: 26px;
-        font-weight: bold;
-        white-space: nowrap;
-        overflow-x: auto;
-        overflow-y: hidden;
-        display: flex;
-    }
-    
-    .patient-text span {
-        margin-right: 10px;
-    }
-</style>
+
+  </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center">Office Assignments</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Office Number</th>
-                                            <th>Patients</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for office_number, patients in assigned_offices.items() %}
-                                        <tr>
-                                            <td>{{ office_number }}</td>
-                                            <td>
-                                                {% for patient in patients %}
-                                                <span>{{ patient }}</span>
-                                                {% endfor %}
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center">Treatment Rooms</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Room Number</th>
-                                            <th>Patients</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for room_number, patients in treatment_rooms.items() %}
-                                        <tr>
-                                            <td>{{ room_number }}</td>
-                                            <td>
-                                                {% for patient in patients %}
-                                                <span>{{ patient }}</span>
-                                                {% endfor %}
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="<KEY>" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="<KEY>" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="<KEY>" crossorigin="anonymous"></script>
-    <script src="./script.js"></script>
+<div class="container-fluid mt-3">
+  <!-- First Row: Offices of Doctors -->
+  <div class="row mt-3 one-third-height">
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header h1 text-center" style="background-color: #ffc107;">
+          Γραφείο 1
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="row">
+            {% for barcode in assigned_offices['Γραφείο1'] %}
+            <div class="col-3 text-center h1" data-entry="{{ barcode }}">{{ barcode }}</div>
+
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header h1 text-center">
+          Γραφείο 2
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="row">
+            {% for barcode in assigned_offices['Γραφείο2'] %}
+            <div class="col-3 text-center h1" data-entry="{{ barcode }}">{{ barcode }}</div>
+
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header h1 text-center" style="background-color: #28a745;">
+          Αιματολογικό
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="row">
+            {% for barcode in assigned_offices['Αιματολογικό'] %}
+            <div class="col-3 text-center h1" data-entry="{{ barcode }}">{{ barcode }}</div>
+
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Second Row: Treatment Rooms 1-4 -->
+  <div class="row mt-3 one-third-height">
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header h1 text-center" style="background-color: #fd7e14;">
+          Θάλαμος 1
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="row">
+            {% for barcode in treatment_rooms[1] %}
+            <div class="col-3 text-center h1">{{ barcode }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header h1 text-center" style="background-color: #dc3545;">
+          Θάλαμος 2
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="row">
+            {% for barcode in treatment_rooms[2] %}
+            <div class="col-3 text-center h1">{{ barcode }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header h1 text-center" style="background-color: #6610f2;">
+          Θάλαμος 3
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="row">
+            {% for barcode in treatment_rooms[3] %}
+            <div class="col-3 text-center h1">{{ barcode }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header h1 text-center" style="background-color: #20c997;">
+          Θάλαμος 4
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="row">
+            {% for barcode in treatment_rooms[4] %}
+            <div class="col-3 text-center h1">{{ barcode }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Third Row: Treatment Rooms 5-8 -->
+  <div class="row mt-3 one-third-height">
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header h1 text-center" style="background-color: #17a2b8;">
+          Θάλαμος 5
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="row">
+            {% for barcode in treatment_rooms[5] %}
+            <div class="col-3 text-center h1">{{ barcode }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header h1 text-center" style="background-color: #ffc107;">
+          Θάλαμος 6
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="row">
+            {% for barcode in treatment_rooms[6] %}
+            <div class="col-3 text-center h1">{{ barcode }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header h1 text-center" style="background-color: #28a745;">
+          Θάλαμος 7
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="row">
+            {% for barcode in treatment_rooms[7] %}
+            <div class="col-3 text-center h1">{{ barcode }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="card">
+        <div class="card-header h1 text-center" style="background-color: #007bff;">
+          Θάλαμος 8
+        </div>
+        <div class="list-group list-group-flush">
+          <div class="row">
+            {% for barcode in treatment_rooms[8] %}
+            <div class="col-3 text-center h1">{{ barcode }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS (Optional) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- JavaScript for refreshing data and marking new entries -->
+<script>
+    // Get previous data from localStorage or initialize it as an empty object
+    let previousData = JSON.parse(localStorage.getItem('previousData')) || {};
+    let previousAssignedOffices = [];
+    let previousTreatmentRooms = [];
+
+    function fetchAndCheckData() {
+        Promise.all([
+            fetch('/assigned-offices').then(response => response.json()),
+            fetch('/treatment-rooms').then(response => response.json())
+        ])
+        .then(([assignedOfficesData, treatmentRoomsData]) => {
+            const currentAssignedOfficesData = assignedOfficesData.assigned_offices;
+            const currentTreatmentRoomsData = treatmentRoomsData.treatment_rooms;
+
+            if (
+                (previousData.assignedOffices !== null && JSON.stringify(currentAssignedOfficesData) !== previousData.assignedOffices) ||
+                (previousData.treatmentRooms !== null && JSON.stringify(currentTreatmentRoomsData) !== previousData.treatmentRooms)
+            ) {
+                location.reload(); // Refresh the page if data has changed
+            }
+
+            previousData.assignedOffices = JSON.stringify(currentAssignedOfficesData);
+            previousData.treatmentRooms = JSON.stringify(currentTreatmentRoomsData);
+
+            // Store current data in localStorage
+            localStorage.setItem('previousData', JSON.stringify(previousData));
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+    }
+
+    // Fetch data initially and then every 5 seconds
+    fetchAndCheckData();
+    setInterval(fetchAndCheckData, 5000); // Adjust the interval as needed
+</script>
+    
 </body>
 </html>
+
