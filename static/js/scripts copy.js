@@ -50,31 +50,33 @@ function printBarcode(barcode) {
 function issueTicket() {
     // Check if the "Print Ticket" checkbox is checked
     const printOption = document.getElementById('printTicket').checked;
-    // Get the number of tickets from the input field
-    const numTickets = parseInt(document.getElementById('numTickets').value);
 
-    for (let i = 0; i < numTickets; i++) {
-        fetch('/issue-number')
-          .then(response => response.json())
-          .then(data => {
+    // Fetch data from the server
+    fetch('/issue-number')
+        .then(response => response.json())
+        .then(data => {
             var barcode = data.barcode;
-    
-            // Print the barcode only if the checkbox is checked
+            const resultMessage = document.getElementById('resultMessage');
+            resultMessage.innerText = `New ticket issued: ${data.barcode}`;
+
+            // Show the message container
+            const messageContainer = document.querySelector('.message-container');
+            messageContainer.style.display = 'block';
+
+            // Call the printBarcode function if the printOption is enabled
             if (printOption) {
-              printBarcode(barcode);
+                printBarcode(barcode);
             }
-            
+
             // Refresh the page after a certain duration
             setTimeout(function () {
                 location.reload();
             }, 1000); // Refresh after 1 second (1000 milliseconds)
-
-          })
-          .catch(error => {
+        })
+        .catch(error => {
             console.error('Error:', error);
-          });
-      }
-    }
+        });
+}
 
 // Function to assign tickets to an office
 function assignToOffice() {
@@ -216,43 +218,10 @@ function proceedToTreatment() {
     });
 }
 
-// Function for treatment complete
-function treatmentcomplete() {
-    // Get the barcode input value
-    const trtmntroomSelect = document.getElementById('trtmntroomSelect')
-    const barcode = trtmntroomSelect.value;
-    if (barcode.trim() === "") {
-        alert("Please enter a ticket number.");
-        return;
-    }
-    // Send a POST request to the server to remove a barcode
-    fetch('/treatment-completion', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            barcode: barcode
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message); // Display a message to the user.
-        trtmntroomSelect.value = ''; // Clear the input field.
-
-        // Refresh the page after a certain duration
-        setTimeout(function () {
-            location.reload();
-        }, 1000); // Refresh after 1 second (1000 milliseconds)
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
 // Function to remove a barcode
 function removeBarcode() {
     // Get the barcode input value
-    const barcodeInput = document.getElementById('removeBarcodeSelect');
+    const barcodeInput = document.getElementById('removeBarcodeInput');
     const barcode = barcodeInput.value;
 
     if (barcode.trim() === "") {

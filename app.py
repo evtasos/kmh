@@ -15,6 +15,7 @@ treatment_rooms = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}
 
 # Route to issue a new patient number (barcode)
 @app.route('/issue-number')
+
 def issue_number():
     global patient_counter
     barcode = 'A' + str(patient_counter)
@@ -31,6 +32,7 @@ def issue_number():
 
 # Route to assign patients to an office
 @app.route('/assign-office', methods=['POST'])
+
 def assign_office():
     try:
         barcodes = request.json['barcodes']
@@ -55,6 +57,7 @@ def assign_office():
 
 # Route to move patients to the chemo waiting pool
 @app.route('/add-to-chemo-waiting', methods=['POST'])
+
 def add_to_chemo_waiting():
     try:
         barcode = request.json['barcode']
@@ -75,6 +78,7 @@ def add_to_chemo_waiting():
 
 # Route to assign patients to a treatment room
 @app.route('/assign-treatment-room', methods=['POST'])
+
 def assign_treatment_room():
     global treated_patients
     try:
@@ -97,26 +101,31 @@ def assign_treatment_room():
 
 # Route to remove patients from various pools
 @app.route('/rmv-barcode', methods=['POST'])
+
 def remove_barcode():
     try:
         barcode = request.json['barcode']
 
         if barcode in office_pool:
             office_pool.remove(barcode)
+            issued_numbers.remove(barcode)
             return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left office'})
 
         for office_number, barcodes in assigned_offices.items():
             if barcode in barcodes:
                 barcodes.remove(barcode)
+                issued_numbers.remove(barcode)
                 return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left offices'})
 
         for room_number, barcodes in treatment_rooms.items():
             if barcode in barcodes:
                 barcodes.remove(barcode)
+                issued_numbers.remove(barcode)
                 return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left treatment'})
 
         if barcode in treatment_waiting_pool:
             treatment_waiting_pool.remove(barcode)
+            issued_numbers.remove(barcode)
             return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left chemo pool'})
 
         return jsonify({'message': 'Barcode not found '}), 404
@@ -125,6 +134,7 @@ def remove_barcode():
 
 # Route to import a patient ticket to a pool
 @app.route('/import-ticket', methods=['POST'])
+
 def import_ticket():
     try:
         data = request.json
@@ -137,6 +147,9 @@ def import_ticket():
         if ticket in treatment_waiting_pool:
             return jsonify({'message': f'Ticket {ticket} already exists.'})
 
+        # Add the ticket to issued_numbers before adding to destination pool
+        issued_numbers.append(ticket)
+        
         if destination == 'office_pool':
             office_pool.append(ticket)
             return jsonify({'message': f'Ticket {ticket} imported to Office Pool.'})
@@ -148,7 +161,9 @@ def import_ticket():
         return jsonify({'message': 'Invalid destination.'}), 400
     except Exception as e:
         return jsonify({'error': str(e)}), 500  # Handle exceptions and return an error response
-
+@app.route('/issued-numbers')
+def get_issued_numbers():
+    return jsonify({'issued_numbers': issued_numbers})
 # Route to get the office pool
 @app.route('/office-pool')
 def get_office_pool():
@@ -203,9 +218,6 @@ def view_numbers():
     # Get the total number of patients
     total_patients = len(issued_numbers)
 
-    # Get the number of treated patients
-    #treated_patients = len([barcode for barcodes in treatment_rooms.values() for barcode in barcodes])
-
     # Calculate the percentage of treated patients
     #treated_percentage = round(treated_patients / total_patients, 2)*100 + "%"
     if total_patients != 0:
@@ -219,6 +231,22 @@ def view_numbers():
         "treated_patients": treated_patients,
         "treated_percentage": treated_percentage,
     }
+
+# Route for patient chemo treatment completion
+@app.route('/treatment-completion', methods=['POST'])
+
+def treatment_completion():
+    try:
+        barcode = request.json['barcode']
+        for room_number, barcodes in treatment_rooms.items():
+            if barcode in barcodes:
+                barcodes.remove(barcode)
+                return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left treatment'})
+
+        return jsonify({'message': 'Barcode not found '}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  # Handle exceptions and return an error response
+
 
 # Route to reset the system
 @app.route('/reset')
