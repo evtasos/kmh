@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
-app.config['DEBUG'] = True
+#app.config['DEBUG'] = True
 
 # Initialize a patient counter
 patient_counter = 1
@@ -80,7 +80,7 @@ def add_to_chemo_waiting():
 @app.route('/assign-treatment-room', methods=['POST'])
 
 def assign_treatment_room():
-    global treated_patients
+    #global treated_patients
     try:
         room_number = int(request.json['room_number'])
         barcodes = request.json['barcodes']
@@ -91,7 +91,7 @@ def assign_treatment_room():
                 treatment_rooms[room_number].append(barcode)
                 treatment_waiting_pool.remove(barcode)
                 assigned_barcodes.append(barcode)
-                treated_patients += 1
+                #treated_patients += 1
 
         if assigned_barcodes:
             return jsonify({'barcodes': assigned_barcodes, 'message': f'Patients assigned to treatment room {room_number}.'})
@@ -234,13 +234,14 @@ def view_numbers():
 
 # Route for patient chemo treatment completion
 @app.route('/treatment-completion', methods=['POST'])
-
 def treatment_completion():
+    global treated_patients
     try:
         barcode = request.json['barcode']
         for room_number, barcodes in treatment_rooms.items():
             if barcode in barcodes:
                 barcodes.remove(barcode)
+                treated_patients += 1
                 return jsonify({'barcode': barcode, 'message': f'Patient with barcode {barcode} left treatment'})
 
         return jsonify({'message': 'Barcode not found '}), 404
@@ -253,6 +254,8 @@ def treatment_completion():
 def reset():
     global patient_counter
     patient_counter = 1
+    global treated_patients
+    treated_patients = 0
     issued_numbers.clear()
     office_pool.clear()
     global assigned_offices
@@ -262,5 +265,5 @@ def reset():
     treatment_rooms = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}
     return jsonify({'message': 'System reset successfully.'})
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0')
