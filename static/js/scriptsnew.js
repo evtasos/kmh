@@ -37,41 +37,77 @@ function printBarcode(barcode) {
     newWindow.document.title = "Print Ticket";
 
     // Add a delay to allow content to load before printing
-    // setTimeout(function () {
-    //     // Print the new window
-    //     newWindow.print();
+    setTimeout(function () {
+        // Print the new window
+        newWindow.print();
 
-    //     // Close the new window
-    //     newWindow.close();
-    // }, 1000); // Adjust the delay (in milliseconds) as needed
+        // Close the new window
+        newWindow.close();
+    }, 3000); // Adjust the delay (in milliseconds) as needed
 }
 
 // Function to issue a ticket
 async function issueTicket() {
-  // Check if the "Print Ticket" checkbox is checked
-  const printOption = document.getElementById('printTicket').checked;
-  // Get the number of tickets from the input field
-  const numTickets = parseInt(document.getElementById('numTickets').value);
+    // Check if the "Print Ticket" checkbox is checked
+    const printOption = document.getElementById('printTicket').checked;
+    // Get the number of tickets from the input field
+    const numTickets = parseInt(document.getElementById('numTickets').value);
 
-  try {
-    for (let i = 0; i < numTickets; i++) {
-      const response = await fetch('/issue-number');
-      const data = await response.json();
-      const barcode = data.barcode;
+    try {
+        const barcodes = [];
+    
+        for (let i = 0; i < numTickets; i++) {
+          const response = await fetch('/issue-number');
+          const data = await response.json();
+          const barcode = data.barcode;
+          barcodes.push(barcode);
+        }
+    
+        // Create formatted ticket content (HTML structure)
+        let ticketData = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>Tickets</title>
+      <style>
+        /* Add your desired CSS styles for formatting tickets here */
+      </style>
+    </head>
+    <body>`;
+    
+        for (const barcode of barcodes) {
+          ticketData += `
+          <div class="ticket">
+            <p>-------------------------------</p>
+            <p>Γ.Α.Ν.Π. ΜΕΤΑΞΑ</p>
+            <p>ΜΟΝΑΔΑ ΗΜΕΡΗΣΙΑΣ<br>ΝΟΣΗΛΕΙΑΣ</p>
+            <p>Ο ΑΡΙΘΜΟΣ ΔΕΝ ΑΝΤΙΣΤΟΙΧΕΙ ΣΕ ΣΕΙΡΑ ΠΡΟΤΕΡΑΙΟΤΗΤΑΣ</p>
+            <p>${barcode}</p> <p>-------------------------------</p>
+          </div>
+          `;
+        }
+    
+        ticketData += `</body></html>`;
+    
+        // Open a print dialog
+        const printWindow = window.open("", "PRINT");
+        printWindow.document.write(ticketData);
+        printWindow.document.close(); // Important for print functionality
+        //printWindow.focus(); // Necessary for some browsers
+        printWindow.print(); // Trigger print dialog
+        // Delay closing the window after a short timeout (adjust as needed)
+        setTimeout(function() {
+        printWindow.close();
+      }, 500);  // Adjust timeout in milliseconds
+        // ... reload the page (optional)
+        setTimeout(function () {
+                            location.reload();
+                        }, 1000); // Refresh after 1 second
 
-      // Print the barcode only if the checkbox is checked
-      if (printOption) {
-        await printBarcode(barcode); // Wait for printing to finish (optional)
+      } catch (error) {
+        console.error('Error:', error);
       }
     }
-
-    // Refresh the page after a certain duration (use setTimeout with async/await)
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
-    location.reload();
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
 
 // Function to assign tickets to an office
 function assignToOffice() {
