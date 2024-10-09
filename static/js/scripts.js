@@ -37,44 +37,41 @@ function printBarcode(barcode) {
     newWindow.document.title = "Print Ticket";
 
     // Add a delay to allow content to load before printing
-    setTimeout(function () {
-        // Print the new window
-        newWindow.print();
+    // setTimeout(function () {
+    //     // Print the new window
+    //     newWindow.print();
 
-        // Close the new window
-        newWindow.close();
-    }, 1000); // Adjust the delay (in milliseconds) as needed
+    //     // Close the new window
+    //     newWindow.close();
+    // }, 1000); // Adjust the delay (in milliseconds) as needed
 }
 
 // Function to issue a ticket
-function issueTicket() {
-    // Check if the "Print Ticket" checkbox is checked
-    const printOption = document.getElementById('printTicket').checked;
-    // Get the number of tickets from the input field
-    const numTickets = parseInt(document.getElementById('numTickets').value);
+async function issueTicket() {
+  // Check if the "Print Ticket" checkbox is checked
+  const printOption = document.getElementById('printTicket').checked;
+  // Get the number of tickets from the input field
+  const numTickets = parseInt(document.getElementById('numTickets').value);
 
+  try {
     for (let i = 0; i < numTickets; i++) {
-        fetch('/issue-number')
-          .then(response => response.json())
-          .then(data => {
-            var barcode = data.barcode;
-    
-            // Print the barcode only if the checkbox is checked
-            if (printOption) {
-              printBarcode(barcode);
-            }
-            
-            // Refresh the page after a certain duration
-            setTimeout(function () {
-                location.reload();
-            }, 1000); // Refresh after 1 second (1000 milliseconds)
+      const response = await fetch('/issue-number');
+      const data = await response.json();
+      const barcode = data.barcode;
 
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
+      // Print the barcode only if the checkbox is checked
+      if (printOption) {
+        await printBarcode(barcode); // Wait for printing to finish (optional)
       }
     }
+
+    // Refresh the page after a certain duration (use setTimeout with async/await)
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+    location.reload();
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
 
 // Function to assign tickets to an office
 function assignToOffice() {
