@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
-#app.config['DEBUG'] = True
+app.config['DEBUG'] = True
 
 # Initialize a patient counter
 patient_counter = 1
@@ -265,5 +265,5 @@ def reset():
     treatment_rooms = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}
     return jsonify({'message': 'System reset successfully.'})
 
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0')
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
